@@ -1,2 +1,13 @@
-# scrum-fe
-Scrum Project Frontend
+## Frontend Products Example.
+
+### Tecnologies
+
+- ReactJS
+- Material UI
+- Redux
+
+### Installation
+
+- `yarn`
+
+- `yarn start`

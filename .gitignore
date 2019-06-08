@@ -1,0 +1,10 @@
+
+# Godot-specific ignores
+node_modules/*
+build/*
+.import/
+export.cfg
+export_presets.cfg
+
+# Mono-specific ignores
+.mono/
