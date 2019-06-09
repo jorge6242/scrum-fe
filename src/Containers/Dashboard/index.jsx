@@ -21,6 +21,8 @@ import Project from "../../Containers/Project";
 import Persons from "../Persons";
 import Team from "../Team";
 import User from "../User";
+import SprintList from "../../Components/SprintList";
+import Sprint from "../Sprint";
 
 function TabContainer({ children, dir }) {
   return (
@@ -59,6 +61,10 @@ class Dashboard extends Component {
       case 0:
         element = <Project />;
         title ='Projecto';
+        break;
+      case 3:
+        element = <Sprint />;
+        title ='Sprint';
         break;
       default:
         break;
@@ -123,6 +129,13 @@ class Dashboard extends Component {
           </React.Fragment>
         );
         break;
+      case 3:
+        button = (
+          <Fab color="primary" aria-label="Add" className={classes.fab} onClick={this.handleClick}>
+            <AddIcon />
+          </Fab>
+        );
+        break;
       default:
         break;
     }
@@ -156,7 +169,7 @@ class Dashboard extends Component {
           <TabContainer dir={theme.direction}><ProjectList /></TabContainer>
           <TabContainer dir={theme.direction}><Persons /></TabContainer>
           <TabContainer dir={theme.direction}>Backlog</TabContainer>
-          <TabContainer dir={theme.direction}>Sprint</TabContainer>
+          <TabContainer dir={theme.direction}><SprintList /></TabContainer>
           <TabContainer dir={theme.direction}>Tablero</TabContainer>
         </SwipeableViews>
         <Grid 
