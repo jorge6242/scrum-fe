@@ -1,13 +1,12 @@
-import Team from '../Api/Team';
+import Backlog from '../Api/Backlog';
 import {
     ACTIONS as ACTIONS_FORM
-} from './teamFormActions';
+} from './backlogFormActions';
 import snackBarStatus from './snackbarActions';
 
 export const ACTIONS = {
-    GET_ALL: 'team/get_all',
-    GET: 'team/get',
-    USERS_ADD_TEAM: 'user/users_add_team',
+    GET_ALL: 'backlog/get_all',
+    GET: 'backlog/get',
 };
 
 export const getAll = () => async dispatch => {
@@ -15,16 +14,16 @@ export const getAll = () => async dispatch => {
         const {
             data: { data },
             status
-        } = await Team.getAll();
-        let getAllTeam = [];
+        } = await Backlog.getAll();
+        let response = [];
         if (status === 200) {
-            getAllTeam = data;
+            response = data;
             dispatch({
                 type: ACTIONS.GET_ALL,
-                payload: getAllTeam
+                payload: response
             });
         }
-        return getAllTeam;
+        return response;
     } catch (error) {
         snackBarStatus({
             payload: {
@@ -42,22 +41,22 @@ export const create = body => async dispatch => {
         const {
             data,
             status
-        } = await Team.create(body);
-        let createTeamResponse = [];
+        } = await Backlog.create(body);
+        let response = [];
         if (status === 200 || status === 201) {
-            createTeamResponse = {
+            response = {
                 data,
                 status
             };
             snackBarStatus({
                 payload: {
-                    title: 'Team Created!',
+                    title: 'Backlog Created!',
                     type: 'success',
                     enable: true,
                 },
             })(dispatch);
         }
-        return createTeamResponse;
+        return response;
     } catch (error) {
         snackBarStatus({
             payload: {
@@ -75,16 +74,16 @@ export const get = id => async dispatch => {
         const {
             data: { data },
             status
-        } = await Team.get(id);
-        let teamResponse = [];
+        } = await Backlog.get(id);
+        let response = [];
         if (status === 200) {
-            teamResponse = data;
+            response = data;
             dispatch({
                 type: ACTIONS_FORM.SET_EDIT,
                 payload: data
             });
         }
-        return teamResponse;
+        return response;
     } catch (error) {
         snackBarStatus({
             payload: {
@@ -102,22 +101,22 @@ export const update = body => async dispatch => {
         const {
             data,
             status
-        } = await Team.update(body);
-        let teamResponse = [];
+        } = await Backlog.update(body);
+        let response = [];
         if (status === 200) {
-            teamResponse = {
+            response = {
                 data,
                 status
             };
             snackBarStatus({
                 payload: {
-                    title: 'Team Updated!',
+                    title: 'Project Updated!',
                     type: 'success',
                     enable: true,
                 },
             })(dispatch);
         }
-        return teamResponse;
+        return response;
     } catch (error) {
         snackBarStatus({
             payload: {
@@ -135,22 +134,22 @@ export const remove = id => async dispatch => {
         const {
             data,
             status
-        } = await Team.remove(id);
-        let teamResponse = [];
+        } = await Backlog.remove(id);
+        let response = [];
         if (status === 200) {
-            teamResponse = {
+            response = {
                 data,
                 status
             };
             snackBarStatus({
                 payload: {
-                    title: 'Team Removed!',
+                    title: 'Project Removed!',
                     type: 'success',
                     enable: true,
                 },
             })(dispatch);
         }
-        return teamResponse;
+        return response;
     } catch (error) {
         snackBarStatus({
             payload: {
@@ -162,38 +161,3 @@ export const remove = id => async dispatch => {
         return error;
     }
 };
-
-export const createUsersTeam = body => async dispatch => {
-    try {
-        const {
-            data,
-            status
-        } = await Team.createUsersTeam(body);
-        let createTeamResponse = [];
-        if (status === 200 || status === 201) {
-            createTeamResponse = {
-                data,
-                status
-            };
-            snackBarStatus({
-                payload: {
-                    title: 'User Team Created!',
-                    type: 'success',
-                    enable: true,
-                },
-            })(dispatch);
-        }
-        return createTeamResponse;
-    } catch (error) {
-        snackBarStatus({
-            payload: {
-                title: error.message,
-                type: 'error',
-                enable: true,
-            },
-        })(dispatch);
-        return error;
-    }
-};
-
-export const selectedUsers = users => ({ type: ACTIONS.USERS_ADD_TEAM, payload: users });

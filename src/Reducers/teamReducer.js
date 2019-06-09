@@ -4,6 +4,7 @@ import {
 
 const initialState = {
     teams: [],
+    usersToAddTeam: [],
 };
 
 const teamReducer = (state = initialState, action) => {
@@ -12,6 +13,11 @@ const teamReducer = (state = initialState, action) => {
             return {
                 ...state,
                 teams: action.payload,
+            };
+        case ACTIONS.USERS_ADD_TEAM:
+            return {
+                ...state,
+                usersToAddTeam: action.payload,
             };
         default:
             return state;

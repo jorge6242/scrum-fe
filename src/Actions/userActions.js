@@ -7,6 +7,7 @@ import snackBarStatus from './snackbarActions';
 export const ACTIONS = {
     GET_ALL: 'user/get_all',
     GET: 'user/get',
+    UPDATE_LIST: 'user/update_list',
 };
 
 export const getAll = () => async dispatch => {
@@ -161,3 +162,6 @@ export const remove = id => async dispatch => {
         return error;
     }
 };
+
+export const updateList = users => ({ type: ACTIONS.UPDATE_LIST, payload: users });
+

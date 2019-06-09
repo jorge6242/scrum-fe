@@ -1,0 +1,7 @@
+.team-form {
+  display: block !important; }
+  .team-form .team-form__field {
+    margin: 5%; }
+    .team-form .team-form__field button {
+      margin: 1%;
+      padding: 1%; }

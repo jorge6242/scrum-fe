@@ -4,11 +4,12 @@ import Grid from '@material-ui/core/Grid';
 import purple from '@material-ui/core/colors/purple';
 import { withStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { updateModal } from '../../Actions/modalActions';
 import './index.sass';
 
 
 /**
- * Custom Generic Modal
+ * Generic Modal
  *
  * @param {boolean} status Status Modal
  * @param {html} element Children Component
@@ -17,9 +18,9 @@ import './index.sass';
  *
  * behavior :
  *
- * import { updateCustomModal } from 'Actions/custoModalActions';
+ * import { updateModal } from 'Actions/modalActions';
  *
- * this.props.updateCustomModal({ payload : { status : true , element : <Component/> } }) Open Modal
+ * this.props.updateModal({ payload : { status : true , element : <Component/> } }) Open Modal
  *
  */
 
@@ -31,13 +32,13 @@ const styles = theme => ({
   },
 });
 
-const Modal = ({ classes, element, status, isLoader, customSize, title }) => (
+const Modal = ({ classes, element, status, isLoader, customSize, title, updateModal }) => (
   <div className={`modal-main ${status ? 'modal-main--active' : ''} `}>
     <div className="modal-main__backdrop">
       <Grid container spacing={0} className={`modal-main__content ${customSize}`}>
         <Grid container spacing={0} className="modal-main_header">
           <Grid item xs={4} className="modal-main_title">{title}</Grid>
-          <Grid item xs={7} className="modal-main_close">X</Grid>
+          <Grid item xs={7} className="modal-main_close" onClick={() => updateModal({ payload: { status: false } })}>X</Grid>
         </Grid>
         <Grid
           container
@@ -70,4 +71,8 @@ const mS = ({
   title,
 });
 
-export default connect(mS)(withStyles(styles)(Modal));
+const mD = {
+  updateModal
+}
+
+export default connect(mS,mD)(withStyles(styles)(Modal));

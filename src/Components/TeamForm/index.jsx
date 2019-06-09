@@ -4,6 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import Button from '@material-ui/core/Button';
 import { Field, reduxForm } from "redux-form";
 import TextField from '@material-ui/core/TextField';
+import './index.sass';
 
 const validate = values => {
   const errors = {};
@@ -31,9 +32,9 @@ const renderTextField = ({
 const TeamForm = props => {
   const { handleSubmit, pristine, reset, submitting, handleForm } = props;
   return (
-    <Grid container spacing={0} className="login-form">
+    <Grid container spacing={0} className="team-form">
       <form onSubmit={handleSubmit(handleForm)}>
-        <Grid item xs={12} className="login-form__field">
+        <Grid item xs={12} className="team-form__field">
           <Field
             name="name"
             type="text"
@@ -41,7 +42,7 @@ const TeamForm = props => {
             label="Nombre del Equipo"
           />
         </Grid>
-        <Grid item xs={12} className="login-form__field">
+        <Grid item xs={12} className="team-form__field">
           <Button type="submit" disabled={submitting} variant="contained" color="primary" >
             Crear
           </Button>

@@ -22,9 +22,16 @@ export const login = body => async dispatch => {
         }
         return authResponse;
     } catch (error) {
+        const { error: err } = error;
+        let title ='';
+        if( err === 'unauthorized') {
+            title = 'Bad Credentials';
+        } else {
+            title = error;
+        }
         snackBarStatus({
             payload: {
-                title: error.message,
+                title,
                 type: 'error',
                 enable: true,
             },

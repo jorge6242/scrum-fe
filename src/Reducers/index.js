@@ -14,6 +14,8 @@ import projectFormReducer from './projectFormReducer';
 import teamFormReducer from './teamFormReducer';
 import userReducer from './userReducer';
 import userFormReducer from './userFormReducer';
+import backlogReducer from './backlogReducer';
+import backlogFormReducer from './backlogFormReducer';
 
 const rootReducer = combineReducers({
   modalReducer,
@@ -27,6 +29,8 @@ const rootReducer = combineReducers({
   teamFormReducer,
   userReducer,
   userFormReducer,
+  backlogReducer,
+  backlogFormReducer,
 });
 
 export default rootReducer;

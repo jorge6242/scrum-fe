@@ -18,8 +18,9 @@ import { logout } from '../../Actions/loginActions';
 import "./index.sass";
 import ProjectList from "../../Components/ProjectList";
 import Project from "../../Containers/Project";
-import User from "../User";
+import Persons from "../Persons";
 import Team from "../Team";
+import User from "../User";
 
 function TabContainer({ children, dir }) {
   return (
@@ -85,6 +86,10 @@ class Dashboard extends Component {
     this.props.updateModal({ payload: { status: true, title: 'Team', element: <Team /> } });
   }
 
+  handleUser = () => {
+    this.props.updateModal({ payload: { status: true, title: 'Person', element: <User /> } });
+  }
+
   renderButtons = () => {
     const { classes } = this.props;
     const { value } = this.state;
@@ -111,6 +116,7 @@ class Dashboard extends Component {
             <Button
               variant="contained"
               color="primary"
+              onClick={this.handleUser}
             >
               Add User
             </Button>
@@ -148,7 +154,7 @@ class Dashboard extends Component {
           onChangeIndex={this.handleChangeIndex}
         >
           <TabContainer dir={theme.direction}><ProjectList /></TabContainer>
-          <TabContainer dir={theme.direction}><User /></TabContainer>
+          <TabContainer dir={theme.direction}><Persons /></TabContainer>
           <TabContainer dir={theme.direction}>Backlog</TabContainer>
           <TabContainer dir={theme.direction}>Sprint</TabContainer>
           <TabContainer dir={theme.direction}>Tablero</TabContainer>

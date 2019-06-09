@@ -3,9 +3,9 @@ export const ACTIONS = {
     CLEAR: 'project_form/clear',
   };
   
-  export const setEdit = product => ({
+  export const setEdit = project => ({
     type: ACTIONS.SET_EDIT,
-    payload: product
+    payload: project
   });
   
   export const clear = () => ({

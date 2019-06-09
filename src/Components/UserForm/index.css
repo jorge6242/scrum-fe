@@ -1,0 +1,7 @@
+.user-form {
+  display: block !important; }
+  .user-form .user-form__field {
+    margin: 5%; }
+    .user-form .user-form__field button {
+      margin: 1%;
+      padding: 1%; }

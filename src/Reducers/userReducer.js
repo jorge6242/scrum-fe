@@ -13,6 +13,11 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 users: action.payload,
             };
+        case ACTIONS.UPDATE:
+            return {
+                ...state,
+                users: action.payload,
+            };
         default:
             return state;
     }

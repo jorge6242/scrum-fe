@@ -9,8 +9,8 @@ export function setupInterceptors() {
     AXIOS.interceptors.response.use(
       response => response,
       error => {
-        const { status } = error.response;
-          if (status === 401) {
+        const { status, data: { error: err } } = error.response;
+          if (status === 401 && err !== 'unauthorized') {
             window.location.href = '/';
           }
         return Promise.reject(error.response.data);

@@ -3,9 +3,9 @@ export const ACTIONS = {
     CLEAR: 'team_form/clear',
   };
   
-  export const setEdit = product => ({
+  export const setEdit = team => ({
     type: ACTIONS.SET_EDIT,
-    payload: product
+    payload: team
   });
   
   export const clear = () => ({

@@ -30,6 +30,15 @@ const Team = {
   remove(id) {
     return AXIOS.delete(`${Prefix.api}/team/${id}`, { headers: headers() });
   },
+  createUsersTeam(data) {
+    return AXIOS.post(
+      `${Prefix.api}/users-team`,
+      {
+        ...data,
+      },
+      { headers: headers() },
+    );
+  },
 };
 
 export default Team;

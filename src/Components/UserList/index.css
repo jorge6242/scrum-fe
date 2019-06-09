@@ -1,3 +1,6 @@
 .user-list-container .user-container .title {
   margin-top: 20px;
   text-align: center; }
+
+.user-list-container .user-container.active .avatar div {
+  background-color: #3f51b5; }
