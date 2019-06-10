@@ -1,0 +1,7 @@
+.backlog-form {
+  display: block !important; }
+  .backlog-form .backlog-form__field {
+    margin: 5%; }
+    .backlog-form .backlog-form__field button {
+      margin: 1%;
+      padding: 1%; }

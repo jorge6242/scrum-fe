@@ -4,6 +4,7 @@ import {
 
 const initialState = {
     users: [],
+    usersAvailable: [],
 };
 
 const userReducer = (state = initialState, action) => {
@@ -13,10 +14,15 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 users: action.payload,
             };
+        case ACTIONS.GET_AVAILABLE_USERS:
+            return {
+                ...state,
+                usersAvailable: action.payload,
+            };
         case ACTIONS.UPDATE:
             return {
                 ...state,
-                users: action.payload,
+                usersAvailable: action.payload,
             };
         default:
             return state;

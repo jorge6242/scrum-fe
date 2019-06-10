@@ -6,6 +6,7 @@ import snackBarStatus from './snackbarActions';
 
 export const ACTIONS = {
     GET_ALL: 'user/get_all',
+    GET_AVAILABLE_USERS: 'user/get_available_users',
     GET: 'user/get',
     UPDATE_LIST: 'user/update_list',
 };
@@ -21,6 +22,33 @@ export const getAll = () => async dispatch => {
             response = data;
             dispatch({
                 type: ACTIONS.GET_ALL,
+                payload: response
+            });
+        }
+        return response;
+    } catch (error) {
+        snackBarStatus({
+            payload: {
+                title: error.message,
+                type: 'error',
+                enable: true,
+            },
+        })(dispatch);
+        return error;
+    }
+};
+
+export const getUsersAvailable = () => async dispatch => {
+    try {
+        const {
+            data: { data },
+            status
+        } = await User.getUsersAvailable();
+        let response = [];
+        if (status === 200) {
+            response = data;
+            dispatch({
+                type: ACTIONS.GET_AVAILABLE_USERS,
                 payload: response
             });
         }

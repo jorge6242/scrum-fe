@@ -6,6 +6,9 @@ const User = {
   getAll() {
     return AXIOS.get(`${Prefix.api}/user`, { headers: headers() });
   },
+  getUsersAvailable() {
+    return AXIOS.get(`${Prefix.api}/users-available`, { headers: headers() });
+  },
   create(data) {
     return AXIOS.post(
       `${Prefix.api}/user`,

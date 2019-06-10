@@ -23,6 +23,7 @@ import Team from "../Team";
 import User from "../User";
 import SprintList from "../../Components/SprintList";
 import Sprint from "../Sprint";
+import Backlog from "../Backlog";
 
 function TabContainer({ children, dir }) {
   return (
@@ -50,21 +51,25 @@ const styles = theme => ({
 
 class Dashboard extends Component {
   state = {
-    value: 0,
+    value: 0
   };
 
   handleClick = () => {
     const { value } = this.state;
     let element = <div />;
-    let title = '';
+    let title = "";
     switch (value) {
       case 0:
         element = <Project />;
-        title ='Projecto';
+        title = "Projecto";
+        break;
+      case 2:
+        element = <Backlog />;
+        title = "Backlog";
         break;
       case 3:
         element = <Sprint />;
-        title ='Sprint';
+        title = "Sprint";
         break;
       default:
         break;
@@ -79,34 +84,44 @@ class Dashboard extends Component {
   handleChangeIndex = index => {
     this.setState({ value: index });
   };
-  
+
   componentDidMount() {
     this.props.getAll();
   }
 
   handleLogout = () => {
     this.props.logout();
-  }
+  };
 
   handleTeam = () => {
-    this.props.updateModal({ payload: { status: true, title: 'Team', element: <Team /> } });
-  }
+    this.props.updateModal({
+      payload: { status: true, title: "Team", element: <Team /> }
+    });
+  };
 
   handleUser = () => {
-    this.props.updateModal({ payload: { status: true, title: 'Person', element: <User /> } });
-  }
+    this.props.updateModal({
+      payload: { status: true, title: "Person", element: <User /> }
+    });
+  };
+
+  renderSimpleButton = () => (
+    <Fab
+      color="primary"
+      aria-label="Add"
+      className={this.props.classes.fab}
+      onClick={this.handleClick}
+    >
+      <AddIcon />
+    </Fab>
+  );
 
   renderButtons = () => {
-    const { classes } = this.props;
     const { value } = this.state;
-    let button = <div />
+    let button = <div />;
     switch (value) {
       case 0:
-        button = (
-          <Fab color="primary" aria-label="Add" className={classes.fab} onClick={this.handleClick}>
-            <AddIcon />
-          </Fab>
-        );
+        button = this.renderSimpleButton();
         break;
       case 1:
         button = (
@@ -129,18 +144,17 @@ class Dashboard extends Component {
           </React.Fragment>
         );
         break;
+      case 2:
+        button = this.renderSimpleButton();
+        break;
       case 3:
-        button = (
-          <Fab color="primary" aria-label="Add" className={classes.fab} onClick={this.handleClick}>
-            <AddIcon />
-          </Fab>
-        );
+        button = this.renderSimpleButton();
         break;
       default:
         break;
     }
     return button;
-  }
+  };
 
   render() {
     const { classes, theme } = this.props;
@@ -162,31 +176,37 @@ class Dashboard extends Component {
           </Tabs>
         </AppBar>
         <SwipeableViews
-          axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+          axis={theme.direction === "rtl" ? "x-reverse" : "x"}
           index={this.state.value}
           onChangeIndex={this.handleChangeIndex}
         >
-          <TabContainer dir={theme.direction}><ProjectList /></TabContainer>
-          <TabContainer dir={theme.direction}><Persons /></TabContainer>
+          <TabContainer dir={theme.direction}>
+            <ProjectList />
+          </TabContainer>
+          <TabContainer dir={theme.direction}>
+            <Persons />
+          </TabContainer>
           <TabContainer dir={theme.direction}>Backlog</TabContainer>
-          <TabContainer dir={theme.direction}><SprintList /></TabContainer>
+          <TabContainer dir={theme.direction}>
+            <SprintList />
+          </TabContainer>
           <TabContainer dir={theme.direction}>Tablero</TabContainer>
         </SwipeableViews>
-        <Grid 
+        <Grid
           item
           xs={12}
           className="dashboard__logout"
           onClick={this.handleLogout}
         >
-        <Button variant="contained" color="primary" className={classes.button}>
-          Logout
-        </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.button}
+          >
+            Logout
+          </Button>
         </Grid>
-        <Grid
-          item
-          xs={12}
-          className="dashboard__create"
-        >
+        <Grid item xs={12} className="dashboard__create">
           {this.renderButtons()}
         </Grid>
         <Modal />
