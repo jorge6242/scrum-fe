@@ -9,13 +9,27 @@ class BacklogList extends Component {
     componentWillMount() {
         this.props.getAll();
     }
+
+    renderStatus = status => {
+        switch (status) {
+            case 1:
+                return 'Sin Asignar'      
+            case 2:
+                return 'En Progreso'      
+            case 3:
+                return 'Culminado'      
+            default:
+                return 'Sin Asignar'
+        }
+    }
+
     render() {
         const { sprints } = this.props;
         return (
         <Grid container spacing={0} className="sprint-container">
             <Grid item xs={12} >Sprints</Grid>
             {
-                sprints.map((sprint, index) => <Item key={index} sprint={sprint.name} />)
+                sprints.map((sprint, index) => <Item key={index} sprint={sprint} renderStatus={this.renderStatus} />)
             }
         </Grid>
         );

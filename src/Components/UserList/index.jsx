@@ -5,7 +5,7 @@ import Avatar from '@material-ui/core/Avatar';
 import FaceIcon from '@material-ui/icons/Face';
 import deepOrange from '@material-ui/core/colors/deepOrange';
 import deepPurple from '@material-ui/core/colors/deepPurple';
-import { getAll, updateList } from '../../Actions/userActions';
+import { getUsersAvailable, updateList } from '../../Actions/userActions';
 import './index.sass';
 import { Grid } from '@material-ui/core';
 
@@ -37,23 +37,23 @@ const styles = {
 
 class UserList extends Component {
     componentWillMount() {
-        this.props.getAll();
+        this.props.getUsersAvailable();
     }
 
     handleUserSelect = key => {
-      const { users } = this.props;
-      if (users[key].check) {
-        users[key].check = false;
+      const { usersAvailable } = this.props;
+      if (usersAvailable[key].check) {
+        usersAvailable[key].check = false;
       } else {
-        users[key].check = true;
+        usersAvailable[key].check = true;
       }
-      this.props.updateList(users);
+      this.props.updateList(usersAvailable);
       this.forceUpdate();
     }
 
     renderUsers = (user, key) => {
-      const { users, classes } = this.props;
-      const checkUser = users[key];
+      const { usersAvailable, classes } = this.props;
+      const checkUser = usersAvailable[key];
       const check = checkUser.check ? 'active' : '';
       return (
         <div key={key} className={`user-container ${check}`} onClick={() => this.handleUserSelect(key)}>
@@ -64,7 +64,7 @@ class UserList extends Component {
     }
 
     render() {
-        const { users } = this.props;
+        const { usersAvailable } = this.props;
         return (
           <Grid
             container
@@ -72,19 +72,19 @@ class UserList extends Component {
             alignItems="center"
             className="user-list-container"
           >
-            {users.map((user, index) => this.renderUsers(user, index))}
+            {usersAvailable.map((user, index) => this.renderUsers(user, index))}
           </Grid>
         );
     }
 }
 
-const mS = ({ userReducer: { users }, teamReducer: { usersToAddTeam } }) => ({
-  users,
+const mS = ({ userReducer: { usersAvailable }, teamReducer: { usersToAddTeam } }) => ({
+  usersAvailable,
   usersToAddTeam
 });
 
 const mD = {
-    getAll,
+    getUsersAvailable,
     updateList,
 }
 
