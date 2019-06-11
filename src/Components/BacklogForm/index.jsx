@@ -116,7 +116,7 @@ const Backlog = props => {
         <Grid item xs={12} className="backlog-form__field">
           <Field
             name="description"
-            type="description"
+            type="text"
             component={renderTextField}
             label="Descripción del Backlog"
           />
@@ -124,7 +124,7 @@ const Backlog = props => {
         <Grid item xs={12} className="backlog-form__field">
           <Field
             name="estimate_days"
-            type="estimate_days"
+            type="number"
             component={renderTextField}
             label="Dias de estimacion"
           />

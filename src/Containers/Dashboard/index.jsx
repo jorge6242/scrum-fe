@@ -24,6 +24,7 @@ import User from "../User";
 import SprintList from "../../Components/SprintList";
 import Sprint from "../Sprint";
 import Backlog from "../Backlog";
+import BacklogList from "../../Components/BacklogList";
 
 function TabContainer({ children, dir }) {
   return (
@@ -186,7 +187,7 @@ class Dashboard extends Component {
           <TabContainer dir={theme.direction}>
             <Persons />
           </TabContainer>
-          <TabContainer dir={theme.direction}>Backlog</TabContainer>
+          <TabContainer dir={theme.direction}><BacklogList /></TabContainer>
           <TabContainer dir={theme.direction}>
             <SprintList />
           </TabContainer>

@@ -16,6 +16,7 @@ class Backlog extends Component {
 
   handleForm = form => {
     form.status = 1;
+    form.assoc_backlog = 1;
     this.props.create(form).then(res => {
       if (res.status === 200 || res.status === 201) {
         this.props.getAll();

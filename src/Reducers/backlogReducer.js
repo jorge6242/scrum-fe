@@ -11,12 +11,12 @@ const backlogReducer = (state = initialState, action) => {
      case ACTIONS.GET_ALL:
          return {
              ...state,
-             users: action.payload,
+             backlogs: action.payload,
          };
      case ACTIONS.UPDATE:
          return {
              ...state,
-             users: action.payload,
+             backlogs: action.payload,
          };
      default:
          return state;
