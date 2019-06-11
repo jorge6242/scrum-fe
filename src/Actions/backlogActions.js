@@ -6,13 +6,16 @@ import snackBarStatus from './snackbarActions';
 
 export const ACTIONS = {
     GET_ALL: 'backlog/get_all',
+    GET_MAIN_BACKLOG: 'backlog/get_main_backlog',
     GET: 'backlog/get',
 };
 
 export const getAll = () => async dispatch => {
     try {
         const {
-            data: { data },
+            data: {
+                data
+            },
             status
         } = await Backlog.getAll();
         let response = [];
@@ -20,6 +23,35 @@ export const getAll = () => async dispatch => {
             response = data;
             dispatch({
                 type: ACTIONS.GET_ALL,
+                payload: response
+            });
+        }
+        return response;
+    } catch (error) {
+        snackBarStatus({
+            payload: {
+                title: error.message,
+                type: 'error',
+                enable: true,
+            },
+        })(dispatch);
+        return error;
+    }
+};
+
+export const getMainBacklog = () => async dispatch => {
+    try {
+        const {
+            data: {
+                data
+            },
+            status
+        } = await Backlog.getMainBacklog();
+        let response = [];
+        if (status === 200) {
+            response = data;
+            dispatch({
+                type: ACTIONS.GET_MAIN_BACKLOG,
                 payload: response
             });
         }
@@ -72,7 +104,9 @@ export const create = body => async dispatch => {
 export const get = id => async dispatch => {
     try {
         const {
-            data: { data },
+            data: {
+                data
+            },
             status
         } = await Backlog.get(id);
         let response = [];

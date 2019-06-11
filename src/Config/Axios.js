@@ -4,7 +4,7 @@ import {
 } from 'axios-progress-bar';
 
 const AXIOS = axios.create({
-  baseURL: 'http://localhost:18083',
+  baseURL: 'http://localhost:18081',
   headers: {
     'Content-Type': 'application/json',
   },
