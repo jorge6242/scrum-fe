@@ -1,39 +1,38 @@
 import React from "react";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
-import Button from '@material-ui/core/Button';
+import Button from "@material-ui/core/Button";
 import { Field, reduxForm } from "redux-form";
-import TextField from '@material-ui/core/TextField';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import { withStyles } from '@material-ui/core/styles';
-import './index.sass';
+import TextField from "@material-ui/core/TextField";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import InputLabel from "@material-ui/core/InputLabel";
+import FormControl from "@material-ui/core/FormControl";
+import { withStyles } from "@material-ui/core/styles";
+import "./index.sass";
 
 const styles = theme => ({
- formControl: {
-   margin: theme.spacing.unit,
-   minWidth: '100%',
- },
+  formControl: {
+    margin: theme.spacing.unit,
+    minWidth: "100%"
+  }
 });
-
 
 const validate = values => {
   const errors = {};
   const requiredFields = [
-    'name',
-    'description',
-    'estimate_days',
-    'type',
-    'project_id',
-    'sprint_id',
-  ]
+    "name",
+    "description",
+    "estimate_days",
+    "type",
+    "project_id",
+    "sprint_id"
+  ];
   requiredFields.forEach(field => {
     if (!values[field]) {
-      errors[field] = 'Required'
+      errors[field] = "Required";
     }
-  })
+  });
   return errors;
 };
 
@@ -50,39 +49,36 @@ const renderTextField = ({
     {...input}
     {...custom}
   />
-)
+);
 
 const renderPickerField = ({
-    input,
-    label,
-    meta: { touched, error },
-    ...custom
-  }) => (
-    <TextField
-      hintText={label}
-      label={label}
-      error={touched && error}
-      {...input}
-      {...custom}
-      InputLabelProps={{
-          shrink: true,
-      }}
-    />
-  )
+  input,
+  label,
+  meta: { touched, error },
+  ...custom
+}) => (
+  <TextField
+    hintText={label}
+    label={label}
+    error={touched && error}
+    {...input}
+    {...custom}
+    InputLabelProps={{
+      shrink: true
+    }}
+  />
+);
 
- const renderSelectField = ({
+const renderSelectField = ({
   customSelect,
   input,
   label,
   meta: { touched, error },
   children,
   classes,
-  ...custom,
- }) => (
-  <FormControl 
-    className={classes.formControl}
-    error={touched && error}
-   >
+  ...custom
+}) => (
+  <FormControl className={classes.formControl} error={touched && error}>
     <InputLabel htmlFor="age-native-simple" className="title-type">
       {label}
     </InputLabel>
@@ -91,8 +87,8 @@ const renderPickerField = ({
       {...input}
       {...custom}
       inputProps={{
-        name: 'age',
-        id: 'age-native-simple',
+        name: "age",
+        id: "age-native-simple"
       }}
     >
       {children}
@@ -101,7 +97,19 @@ const renderPickerField = ({
 );
 
 const Backlog = props => {
-  const { handleSubmit, pristine, reset, submitting, handleForm, classes, projects, sprints, users } = props;
+  const {
+    handleSubmit,
+    pristine,
+    reset,
+    submitting,
+    handleForm,
+    classes,
+    projects,
+    sprints,
+    users,
+    mainBacklogs,
+    show
+  } = props;
   return (
     <Grid container spacing={0} className="backlog-form">
       <form onSubmit={handleSubmit(handleForm)}>
@@ -116,7 +124,7 @@ const Backlog = props => {
         <Grid item xs={12} className="backlog-form__field">
           <Field
             name="description"
-            type="description"
+            type="text"
             component={renderTextField}
             label="Descripción del Backlog"
           />
@@ -124,7 +132,7 @@ const Backlog = props => {
         <Grid item xs={12} className="backlog-form__field">
           <Field
             name="estimate_days"
-            type="estimate_days"
+            type="number"
             component={renderTextField}
             label="Dias de estimacion"
           />
@@ -154,14 +162,34 @@ const Backlog = props => {
             label="Tipo"
             inputProps={{
               name: "type",
-              id: "type",
+              id: "type"
             }}
             classes={classes}
           >
-           <MenuItem value={1}>Epica</MenuItem>
-           <MenuItem value={2}>Caracteristica</MenuItem>
+            <MenuItem value={1}>Epica</MenuItem>
+            <MenuItem value={2}>Caracteristica</MenuItem>
           </Field>
         </Grid>
+        {show && (
+          <Grid item xs={12} className="backlog-form__field">
+            <Field
+              name="assoc_backlog"
+              component={renderSelectField}
+              label="Epica"
+              inputProps={{
+                name: "assoc_backlog",
+                id: "assoc_backlog"
+              }}
+              classes={classes}
+            >
+              {mainBacklogs.map((backlog, key) => (
+                <MenuItem key={key} value={backlog.id}>
+                  {backlog.name}
+                </MenuItem>
+              ))}
+            </Field>
+          </Grid>
+        )}
         <Grid item xs={12} className="backlog-form__field">
           <Field
             name="project_id"
@@ -169,15 +197,15 @@ const Backlog = props => {
             label="Project"
             inputProps={{
               name: "project_id",
-              id: "project_id",
+              id: "project_id"
             }}
             classes={classes}
           >
-            {
-             projects.map((project, key ) => (
-              <MenuItem key={key} value={project.id}>{project.name}</MenuItem>
-             ))
-            }
+            {projects.map((project, key) => (
+              <MenuItem key={key} value={project.id}>
+                {project.name}
+              </MenuItem>
+            ))}
           </Field>
         </Grid>
         <Grid item xs={12} className="backlog-form__field">
@@ -187,15 +215,15 @@ const Backlog = props => {
             label="Sprint"
             inputProps={{
               name: "sprint_id",
-              id: "sprint_id",
+              id: "sprint_id"
             }}
             classes={classes}
           >
-            {
-             sprints.map((sprint, key ) => (
-              <MenuItem key={key} value={sprint.id}>{sprint.name}</MenuItem>
-             ))
-            }
+            {sprints.map((sprint, key) => (
+              <MenuItem key={key} value={sprint.id}>
+                {sprint.name}
+              </MenuItem>
+            ))}
           </Field>
         </Grid>
         <Grid item xs={12} className="backlog-form__field">
@@ -205,15 +233,15 @@ const Backlog = props => {
             label="User"
             inputProps={{
               name: "user_id",
-              id: "user_id",
+              id: "user_id"
             }}
             classes={classes}
           >
-            {
-             users.map((user, key ) => (
-              <MenuItem key={key} value={user.id}>{user.name}</MenuItem>
-             ))
-            }
+            {users.map((user, key) => (
+              <MenuItem key={key} value={user.id}>
+                {user.name}
+              </MenuItem>
+            ))}
           </Field>
         </Grid>
         <Grid item xs={12} className="backlog-form__field">
