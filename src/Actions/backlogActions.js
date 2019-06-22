@@ -7,6 +7,7 @@ import snackBarStatus from './snackbarActions';
 export const ACTIONS = {
     GET_ALL: 'backlog/get_all',
     GET_MAIN_BACKLOG: 'backlog/get_main_backlog',
+    GET_MAIN_BACKLOG_SPRINT: 'backlog/get_main_backlog_sprint',
     GET: 'backlog/get',
 };
 
@@ -52,6 +53,35 @@ export const getMainBacklog = () => async dispatch => {
             response = data;
             dispatch({
                 type: ACTIONS.GET_MAIN_BACKLOG,
+                payload: response
+            });
+        }
+        return response;
+    } catch (error) {
+        snackBarStatus({
+            payload: {
+                title: error.message,
+                type: 'error',
+                enable: true,
+            },
+        })(dispatch);
+        return error;
+    }
+};
+
+export const getMainBacklogSprint = project => async dispatch => {
+    try {
+        const {
+            data: {
+                data
+            },
+            status
+        } = await Backlog.getMainBacklogSprint(project);
+        let response = [];
+        if (status === 200) {
+            response = data;
+            dispatch({
+                type: ACTIONS.GET_MAIN_BACKLOG_SPRINT,
                 payload: response
             });
         }

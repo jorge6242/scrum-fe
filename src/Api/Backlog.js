@@ -13,6 +13,11 @@ const Backlog = {
       headers: headers()
     });
   },
+  getMainBacklogSprint(project) {
+    return AXIOS.get(`${Prefix.api}/get-backlogs-sprint/${project}`, {
+      headers: headers()
+    });
+  },
   create(data) {
     return AXIOS.post(
       `${Prefix.api}/backlog`, {
