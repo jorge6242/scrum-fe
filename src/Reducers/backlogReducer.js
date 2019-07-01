@@ -5,6 +5,7 @@ import {
 const initialState = {
     backlogs: [],
     mainBacklogs: [],
+    mainBacklogSprint: [],
 };
 
 const backlogReducer = (state = initialState, action) => {
@@ -18,6 +19,11 @@ const backlogReducer = (state = initialState, action) => {
             return {
                 ...state,
                 mainBacklogs: action.payload,
+            };
+        case ACTIONS.GET_MAIN_BACKLOG_SPRINT:
+            return {
+                ...state,
+                mainBacklogSprint: action.payload,
             };
         case ACTIONS.UPDATE:
             return {

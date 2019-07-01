@@ -1,20 +1,20 @@
 import React, { Component } from "react";
 import Grid from "@material-ui/core/Grid";
 import { connect } from "react-redux";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import SwipeableViews from 'react-swipeable-views';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
+import SwipeableViews from "react-swipeable-views";
+import AppBar from "@material-ui/core/AppBar";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Typography from "@material-ui/core/Typography";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
-import Button from '@material-ui/core/Button';
+import Button from "@material-ui/core/Button";
 import Modal from "../../Components/Modal";
 import { updateModal } from "../../Actions/modalActions";
 import { getAll, get } from "../../Actions/productActions";
-import { logout } from '../../Actions/loginActions';
+import { logout } from "../../Actions/loginActions";
 import "./index.sass";
 import ProjectList from "../../Components/ProjectList";
 import Project from "../../Containers/Project";
@@ -25,6 +25,7 @@ import SprintList from "../../Components/SprintList";
 import Sprint from "../Sprint";
 import Backlog from "../Backlog";
 import BacklogList from "../../Components/BacklogList";
+import Board from "../Board";
 
 function TabContainer({ children, dir }) {
   return (
@@ -36,7 +37,7 @@ function TabContainer({ children, dir }) {
 
 TabContainer.propTypes = {
   children: PropTypes.node.isRequired,
-  dir: PropTypes.string.isRequired,
+  dir: PropTypes.string.isRequired
 };
 
 const styles = theme => ({
@@ -187,11 +188,15 @@ class Dashboard extends Component {
           <TabContainer dir={theme.direction}>
             <Persons />
           </TabContainer>
-          <TabContainer dir={theme.direction}><BacklogList /></TabContainer>
+          <TabContainer dir={theme.direction}>
+            <BacklogList />
+          </TabContainer>
           <TabContainer dir={theme.direction}>
             <SprintList />
           </TabContainer>
-          <TabContainer dir={theme.direction}>Tablero</TabContainer>
+          <TabContainer dir={theme.direction}>
+            <Board />
+          </TabContainer>
         </SwipeableViews>
         <Grid
           item
@@ -218,7 +223,7 @@ class Dashboard extends Component {
 
 Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired
 };
 
 const mS = ({ productReducer: { products } }) => ({
@@ -229,7 +234,7 @@ const mD = {
   updateModal,
   getAll,
   get,
-  logout,
+  logout
 };
 
 export default connect(
