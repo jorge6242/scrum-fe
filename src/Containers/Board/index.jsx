@@ -9,10 +9,13 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
+import Select from '@material-ui/core/Select';
 import Paper from "@material-ui/core/Paper";
 import { getMainBacklogSprint } from "../../Actions/backlogActions";
-import { getAll } from "../../Actions/projectActions";
+import { getAll, get } from "../../Actions/projectActions";
+import { updateModal } from '../../Actions/modalActions';
 import "./index.sass";
+import Task from "../Task";
 
 const styles = theme => ({
   root: {
@@ -26,67 +29,98 @@ const styles = theme => ({
 });
 
 class Board extends Component {
-  componentDidMount() {
-    const { projects } = this.props;
-    this.props.getAll().then(res => {
-      console.log("res ", res);
-      if (projects.length > 0) {
-      }
-    });
+  state = {
+    value: 0,
+  };
+  componentWillMount() {
+    this.props.getAll();
   }
   renderBacklog = backlog => {
+    console.log('backlog ', backlog);
     return (
       <TableRow>
-        <TableCell component="th" scope="row">
+        <TableCell align="left">
           {backlog.name}
         </TableCell>
-        <TableCell align="right">task</TableCell>
-        <TableCell align="right">task</TableCell>
-        <TableCell align="right">task</TableCell>
+        <TableCell align="left">
+        {backlog.tasks.map(task => task.status === 1 && this.renderTasks(task) )}
+        </TableCell>
+        <TableCell align="left">
+        {backlog.tasks.map(task => task.status === 2 && this.renderTasks(task) )}
+        </TableCell>
+        <TableCell align="left">
+        {backlog.tasks.map(task => task.status === 3 && this.renderTasks(task) )}
+        </TableCell>
       </TableRow>
     );
   };
 
-  renderProjects = () => (
-    <FormControl className={classes.formControl}>
-      <InputLabel htmlFor="age-simple">Age</InputLabel>
-      <Select
-        value={this.state.age}
-        onChange={this.handleChange}
-        inputProps={{
-          name: "age",
-          id: "age-simple"
-        }}
-      >
-        <MenuItem value="">
-          <em>None</em>
-        </MenuItem>
-        <MenuItem value={10}>Ten</MenuItem>
-        <MenuItem value={20}>Twenty</MenuItem>
-        <MenuItem value={30}>Thirty</MenuItem>
-      </Select>
-    </FormControl>
-  );
+  renderTasks = task => {
+    return (
+      <div className="task-container" onClick={this.handleTask}>
+        {task.name}
+      </div>
+    )
+  }
+
+  handleChange = event => {
+    this.setState({ value: event.target.value });
+    if (event.target.value > 0) {
+      this.props.get(event.target.value);
+      this.props.getMainBacklogSprint(event.target.value);
+    }
+  }
+
+  handleTask = () => {
+    this.props.updateModal({
+      payload: { status: true, title: "Task", element: <Task /> }
+    });
+  }
+
+  renderProjects = () => {
+    const { classes, projects } = this.props;
+    const { value } = this.state;
+    return (
+      <FormControl className={classes.formControl}>
+        <Select
+          value={value}
+          onChange={this.handleChange}
+          inputProps={{
+            name: "age",
+            id: "age-simple"
+          }}
+        >
+          <MenuItem value={0}>
+            <em>Select Project</em>
+          </MenuItem>
+          {
+            projects.map((project, key) => (
+              <MenuItem key={key} value={project.id}>{project.name}</MenuItem>
+            ))
+          }
+        </Select>
+      </FormControl>
+    )
+  };
   render() {
-    const { classes, mainBacklogSprint, projects } = this.props;
-    console.log("projects ", projects);
+    const { classes, mainBacklogSprint } = this.props;
     return (
       <Grid container spacing={0} className="board-container">
         <Grid item xs={6} className="board-container__title">
           Sprint
         </Grid>
         <Grid item xs={6} className="board-container__projects">
-          Sprint
+          {this.renderProjects()}
         </Grid>
         <Grid item xs={12} className="board-container__table">
           <Paper className={classes.root}>
             <Table className={classes.table}>
               <TableHead>
                 <TableRow>
-                  <TableCell>Backlog</TableCell>
-                  <TableCell align="right">To do</TableCell>
-                  <TableCell align="right">In Progress</TableCell>
-                  <TableCell align="right">Done</TableCell>
+                  <TableCell align="left">Backlog</TableCell>
+                  <TableCell align="left">To do</TableCell>
+                  <TableCell align="left">In Progress</TableCell>
+                  <TableCell align="left">Done</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -106,15 +140,19 @@ Board.propTypes = {};
 
 const mS = ({
   backlogReducer: { mainBacklogSprint },
-  projectReducer: { projects }
+  projectReducer: { projects },
+  sprintReducer: { sprints },
 }) => ({
   mainBacklogSprint,
-  projects
+  projects,
+  sprints,
 });
 
 const mD = {
   getMainBacklogSprint,
-  getAll
+  getAll,
+  get,
+  updateModal,
 };
 
 export default connect(

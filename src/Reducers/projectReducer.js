@@ -4,6 +4,7 @@ import {
 
 const initialState = {
     projects: [],
+    selectedProject: {},
 };
 
 const projectReducer = (state = initialState, action) => {
@@ -12,6 +13,11 @@ const projectReducer = (state = initialState, action) => {
             return {
                 ...state,
                 projects: action.payload,
+            };
+        case ACTIONS.SELECTED_PROJECT:
+            return {
+                ...state,
+                selectedProject: action.payload,
             };
         default:
             return state;
