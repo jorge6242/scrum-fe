@@ -4,6 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import Button from '@material-ui/core/Button';
 import { Field, reduxForm } from "redux-form";
 import TextField from '@material-ui/core/TextField';
+import Progress from '../../Components/Progress';
 import "./index.sass";
 
 const validate = values => {
@@ -33,7 +34,7 @@ const renderTextField = ({
 )
 
 const LoginForm = props => {
-  const { handleSubmit, pristine, reset, submitting, handleForm } = props;
+  const { handleSubmit, pristine, reset, submitting, handleForm, show } = props;
   return (
     <Grid container spacing={0} className="login-form">
       <form onSubmit={handleSubmit(handleForm)}>
@@ -52,6 +53,9 @@ const LoginForm = props => {
             component={renderTextField}
             label="Password"
           />
+        </Grid>
+        <Grid item xs={12} className="login-container__form">
+          {show && <Progress />}
         </Grid>
         <Grid item xs={12} className="login-form__field">
           <Button type="submit" disabled={submitting} variant="contained" color="primary" >

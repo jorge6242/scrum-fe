@@ -3,8 +3,13 @@ import {
   } from '../Actions/userFormActions';
   
   const initialState = {
-    id: '',
+    id: 0,
     name: '',
+    lastname: '',
+    email: '',
+    phone: '',
+    company: '',
+    password: '',
   };
   
   const userFormReducer = (state = initialState, action) => {

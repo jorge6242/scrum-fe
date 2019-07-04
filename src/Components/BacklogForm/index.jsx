@@ -51,28 +51,11 @@ const renderTextField = ({
   />
 );
 
-const renderPickerField = ({
-  input,
-  label,
-  meta: { touched, error },
-  ...custom
-}) => (
-  <TextField
-    hintText={label}
-    label={label}
-    error={touched && error}
-    {...input}
-    {...custom}
-    InputLabelProps={{
-      shrink: true
-    }}
-  />
-);
-
 const renderSelectField = ({
   customSelect,
   input,
   label,
+  onChange,
   meta: { touched, error },
   children,
   classes,
@@ -83,6 +66,7 @@ const renderSelectField = ({
       {label}
     </InputLabel>
     <Select
+      onChange={onChange}
       className="select-underline"
       {...input}
       {...custom}
@@ -105,10 +89,15 @@ const Backlog = props => {
     handleForm,
     classes,
     projects,
-    sprints,
     users,
-    mainBacklogs,
-    show
+    show,
+    showSprints,
+    sprintsProject,
+    mainBacklogFromSprint,
+    showBacklogs,
+    handleProject,
+    handleSprint,
+    backlogFormReducer
   } = props;
   return (
     <Grid container spacing={0} className="backlog-form">
@@ -137,52 +126,78 @@ const Backlog = props => {
             label="Dias de estimacion"
           />
         </Grid>
-        <Grid container spacing={0}>
-          <Grid item xs={3} className="backlog-form__field">
+        {backlogFormReducer.id === 0 && (
+          <Grid item xs={12} className="backlog-form__field">
             <Field
-              name="start_date"
-              type="date"
-              component={renderPickerField}
-              label="Fecha Inicio"
-            />
+              name="project_id"
+              component={renderSelectField}
+              label="Project"
+              inputProps={{
+                name: "project_id",
+                id: "project_id"
+              }}
+              classes={classes}
+              onChange={handleProject}
+            >
+              {projects.map((project, key) => (
+                <MenuItem key={key} value={project.id}>
+                  {project.name}
+                </MenuItem>
+              ))}
+            </Field>
           </Grid>
-          <Grid item xs={6} className="backlog-form__field">
+        )}
+        {showSprints && (
+          <Grid item xs={12} className="backlog-form__field">
             <Field
-              name="end_date"
-              type="date"
-              component={renderPickerField}
-              label="Fecha Inicio"
-            />
+              name="sprint_id"
+              component={renderSelectField}
+              label="Sprint"
+              inputProps={{
+                name: "sprint_id",
+                id: "sprint_id"
+              }}
+              classes={classes}
+              onChange={handleSprint}
+            >
+              {sprintsProject.map((sprint, key) => (
+                <MenuItem key={key} value={sprint.id}>
+                  {sprint.name}
+                </MenuItem>
+              ))}
+            </Field>
           </Grid>
-        </Grid>
-        <Grid item xs={12} className="backlog-form__field">
-          <Field
-            name="type"
-            component={renderSelectField}
-            label="Tipo"
-            inputProps={{
-              name: "type",
-              id: "type"
-            }}
-            classes={classes}
-          >
-            <MenuItem value={1}>Epica</MenuItem>
-            <MenuItem value={2}>Caracteristica</MenuItem>
-          </Field>
-        </Grid>
-        {show && (
+        )}
+        {backlogFormReducer.id === 0 && (
+          <Grid item xs={12} className="backlog-form__field">
+            <Field
+              name="type"
+              component={renderSelectField}
+              label="Tipo"
+              inputProps={{
+                name: "type",
+                id: "type"
+              }}
+              classes={classes}
+            >
+              <MenuItem value={1}>Epica</MenuItem>
+              <MenuItem value={2}>Caracteristica</MenuItem>
+            </Field>
+          </Grid>
+        )}
+        {show && showBacklogs && (
           <Grid item xs={12} className="backlog-form__field">
             <Field
               name="assoc_backlog"
               component={renderSelectField}
-              label="Epica"
+              label="Backlog"
               inputProps={{
                 name: "assoc_backlog",
                 id: "assoc_backlog"
               }}
               classes={classes}
             >
-              {mainBacklogs.map((backlog, key) => (
+              {mainBacklogFromSprint.map((backlog, key) => (
                 <MenuItem key={key} value={backlog.id}>
                   {backlog.name}
                 </MenuItem>
@@ -190,42 +205,6 @@ const Backlog = props => {
             </Field>
           </Grid>
         )}
-        <Grid item xs={12} className="backlog-form__field">
-          <Field
-            name="project_id"
-            component={renderSelectField}
-            label="Project"
-            inputProps={{
-              name: "project_id",
-              id: "project_id"
-            }}
-            classes={classes}
-          >
-            {projects.map((project, key) => (
-              <MenuItem key={key} value={project.id}>
-                {project.name}
-              </MenuItem>
-            ))}
-          </Field>
-        </Grid>
-        <Grid item xs={12} className="backlog-form__field">
-          <Field
-            name="sprint_id"
-            component={renderSelectField}
-            label="Sprint"
-            inputProps={{
-              name: "sprint_id",
-              id: "sprint_id"
-            }}
-            classes={classes}
-          >
-            {sprints.map((sprint, key) => (
-              <MenuItem key={key} value={sprint.id}>
-                {sprint.name}
-              </MenuItem>
-            ))}
-          </Field>
-        </Grid>
         <Grid item xs={12} className="backlog-form__field">
           <Field
             name="user_id"
@@ -251,7 +230,7 @@ const Backlog = props => {
             variant="contained"
             color="primary"
           >
-            Crear
+            {backlogFormReducer.id === 0 ? "Crear" : "Actualizar"}
           </Button>
           <Button
             type="button"
@@ -268,10 +247,15 @@ const Backlog = props => {
   );
 };
 
+const mS = state => ({
+  initialValues: state.backlogFormReducer,
+  backlogFormReducer: state.backlogFormReducer
+});
+
 const CustomBacklog = reduxForm({
   form: "BacklogForm",
   validate,
   enableReinitialize: true
 })(Backlog);
 
-export default withStyles(styles)(connect(null)(CustomBacklog));
+export default withStyles(styles)(connect(mS)(CustomBacklog));

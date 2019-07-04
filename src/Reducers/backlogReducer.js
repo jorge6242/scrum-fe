@@ -6,6 +6,7 @@ const initialState = {
     backlogs: [],
     mainBacklogs: [],
     mainBacklogSprint: [],
+    mainBacklogFromSprint: [],
 };
 
 const backlogReducer = (state = initialState, action) => {
@@ -24,6 +25,16 @@ const backlogReducer = (state = initialState, action) => {
             return {
                 ...state,
                 mainBacklogSprint: action.payload,
+            };
+        case ACTIONS.GET_MAIN_BACKLOG_FROM_SPRINT:
+            return {
+                ...state,
+                mainBacklogFromSprint: action.payload,
+            };
+        case ACTIONS.CUSTOM_CLEAR:
+            return {
+                ...state,
+                ...action.payload,
             };
         case ACTIONS.UPDATE:
             return {

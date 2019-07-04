@@ -1,10 +1,10 @@
 import React from "react";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
-import Button from '@material-ui/core/Button';
+import Button from "@material-ui/core/Button";
 import { Field, reduxForm } from "redux-form";
-import TextField from '@material-ui/core/TextField';
-import './index.sass';
+import TextField from "@material-ui/core/TextField";
+import "./index.sass";
 
 const validate = values => {
   const errors = {};
@@ -27,10 +27,17 @@ const renderTextField = ({
     {...input}
     {...custom}
   />
-)
+);
 
 const UserForm = props => {
-  const { handleSubmit, pristine, reset, submitting, handleForm } = props;
+  const {
+    handleSubmit,
+    pristine,
+    reset,
+    submitting,
+    handleForm,
+    userFormReducer
+  } = props;
   return (
     <Grid container spacing={0} className="user-form">
       <form onSubmit={handleSubmit(handleForm)}>
@@ -74,19 +81,32 @@ const UserForm = props => {
             label="Empresa"
           />
         </Grid>
+        {userFormReducer.id === 0 && (
+          <Grid item xs={12} className="user-form__field">
+            <Field
+              name="password"
+              type="password"
+              component={renderTextField}
+              label="Clave"
+            />
+          </Grid>
+        )}
         <Grid item xs={12} className="user-form__field">
-          <Field
-            name="password"
-            type="password"
-            component={renderTextField}
-            label="Clave"
-          />
-        </Grid>
-        <Grid item xs={12} className="user-form__field">
-          <Button type="submit" disabled={submitting} variant="contained" color="primary" >
-            Crear
+          <Button
+            type="submit"
+            disabled={submitting}
+            variant="contained"
+            color="primary"
+          >
+            {userFormReducer.id > 0 ? "Actualizar" : "Crear"}
           </Button>
-          <Button type="button" disabled={pristine || submitting} variant="contained" color="secondary" onClick={reset} >
+          <Button
+            type="button"
+            disabled={pristine || submitting}
+            variant="contained"
+            color="secondary"
+            onClick={reset}
+          >
             Limpiar
           </Button>
         </Grid>
@@ -95,10 +115,15 @@ const UserForm = props => {
   );
 };
 
+const mS = state => ({
+  initialValues: state.userFormReducer,
+  userFormReducer: state.userFormReducer
+});
+
 const CustomUserForm = reduxForm({
   form: "UserForm",
   validate,
   enableReinitialize: true
 })(UserForm);
 
-export default connect(null)(CustomUserForm);
+export default connect(mS)(CustomUserForm);

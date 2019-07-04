@@ -38,7 +38,7 @@ const Modal = ({ classes, element, status, isLoader, customSize, title, updateMo
       <Grid container spacing={0} className={`modal-main__content ${customSize}`}>
         <Grid container spacing={0} className="modal-main_header">
           <Grid item xs={4} className="modal-main_title">{title}</Grid>
-          <Grid item xs={7} className="modal-main_close" onClick={() => updateModal({ payload: { status: false } })}>X</Grid>
+          <Grid item xs={7} className="modal-main_close" onClick={() => updateModal({ payload: { status: false, element: <div /> } })}>X</Grid>
         </Grid>
         <Grid
           container

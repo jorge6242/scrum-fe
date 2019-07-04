@@ -7,6 +7,8 @@ import snackBarStatus from './snackbarActions';
 export const ACTIONS = {
     GET_ALL: 'sprint/get_all',
     GET: 'sprint/get',
+    SELECTED_SPRINT: 'sprint_selected_sprint',
+    GET_SPRINTS_FROM_PROJECT: 'sprint/get_sprints_from_project'
 };
 
 export const getAll = () => async dispatch => {
@@ -148,6 +150,35 @@ export const remove = id => async dispatch => {
                     enable: true,
                 },
             })(dispatch);
+        }
+        return response;
+    } catch (error) {
+        snackBarStatus({
+            payload: {
+                title: error.message,
+                type: 'error',
+                enable: true,
+            },
+        })(dispatch);
+        return error;
+    }
+};
+
+export const setSelectedSprint = sprint => ({ type: ACTIONS.SELECTED_SPRINT, payload: sprint });
+
+export const getSprintsProject = project => async dispatch => {
+    try {
+        const {
+            data: { data },
+            status
+        } = await Sprint.getSprintsProject(project);
+        let response = [];
+        if (status === 200) {
+            response = data;
+            dispatch({
+                type: ACTIONS.GET_SPRINTS_FROM_PROJECT,
+                payload: response
+            });
         }
         return response;
     } catch (error) {

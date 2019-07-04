@@ -3,11 +3,11 @@ import {
   } from '../Actions/projectFormActions';
   
   const initialState = {
-    id: '',
+    id: 0,
     name: '',
     description: '',
-    startDate: '',
-    endDate: '',
+    start_date: '',
+    end_date: '',
   };
   
   const projectFormReducer = (state = initialState, action) => {

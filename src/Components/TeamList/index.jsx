@@ -5,7 +5,7 @@ import Avatar from "@material-ui/core/Avatar";
 import FaceIcon from "@material-ui/icons/Face";
 import { withStyles } from "@material-ui/core/styles";
 import { getAll, createUsersTeam } from "../../Actions/teamActions";
-import { getUsersAvailable as getAllUsers } from "../../Actions/userActions";
+import { getAll as getAllUsers } from "../../Actions/userActions";
 import "./index.sass";
 import Item from "./Item";
 
@@ -27,9 +27,9 @@ class TeamList extends Component {
   }
 
   handleSelect = team => {
-    const { usersAvailable } = this.props;
+    const { users } = this.props;
     const usersSelected = [];
-    const filterUsers = usersAvailable.filter(user => user.check);
+    const filterUsers = users.filter(user => user.check);
     if (filterUsers.length > 0) {
       filterUsers.forEach(user => {
         usersSelected.push({ id: user.id });
@@ -87,9 +87,9 @@ class TeamList extends Component {
   }
 }
 
-const mS = ({ teamReducer: { teams }, userReducer: { usersAvailable } }) => ({
+const mS = ({ teamReducer: { teams }, userReducer: { users } }) => ({
   teams,
-  usersAvailable
+  users
 });
 
 const mD = {

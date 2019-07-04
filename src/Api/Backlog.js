@@ -8,13 +8,23 @@ const Backlog = {
       headers: headers()
     });
   },
-  getMainBacklog() {
-    return AXIOS.get(`${Prefix.api}/main-backlog`, {
+  getMainBacklog(project) {
+    return AXIOS.get(`${Prefix.api}/main-backlog/${project}`, {
+      headers: headers()
+    });
+  },
+  checkTaskSprint(project, sprint) {
+    return AXIOS.get(`${Prefix.api}/check-tasks?project=${project}&sprint=${sprint}`, {
       headers: headers()
     });
   },
   getMainBacklogSprint(project) {
     return AXIOS.get(`${Prefix.api}/get-backlogs-sprint/${project}`, {
+      headers: headers()
+    });
+  },
+  getMainBacklogFromSprint(sprint) {
+    return AXIOS.get(`${Prefix.api}/get-backlogs-from-sprint/${sprint}`, {
       headers: headers()
     });
   },

@@ -3,8 +3,12 @@ import {
 } from '../Actions/backlogFormActions';
 
 const initialState = {
- id: '',
+ id: 0,
  name: '',
+ estimate_days : '',
+ status : 0,
+ start_date: '',
+ end_date: '',
 };
 
 const backlogFormReducer = (state = initialState, action) => {

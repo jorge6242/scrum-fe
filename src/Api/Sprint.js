@@ -6,6 +6,9 @@ const Sprint = {
   getAll() {
     return AXIOS.get(`${Prefix.api}/sprint`, { headers: headers() });
   },
+  getSprintsProject(project) {
+    return AXIOS.get(`${Prefix.api}/get-sprints-project/${project}`, { headers: headers() });
+  },
   create(data) {
     return AXIOS.post(
       `${Prefix.api}/sprint`,

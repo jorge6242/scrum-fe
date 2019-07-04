@@ -37,10 +37,12 @@ const renderTextField = ({
 const renderPickerField = ({
     input,
     label,
+    onChange,
     meta: { touched, error },
     ...custom
   }) => (
     <TextField
+      onChange={onChange}
       hintText={label}
       label={label}
       error={touched && error}
@@ -53,7 +55,7 @@ const renderPickerField = ({
   )
 
 const Project = props => {
-  const { handleSubmit, pristine, reset, submitting, handleForm } = props;
+  const { handleSubmit, pristine, reset, submitting, handleForm, projectFormReducer } = props;
   return (
     <Grid container spacing={0} className="login-form">
       <form onSubmit={handleSubmit(handleForm)}>
@@ -87,13 +89,13 @@ const Project = props => {
                 name="end_date"
                 type="date"
                 component={renderPickerField}
-                label="Fecha Inicio"
+                label="Fecha Fin"
             />
             </Grid>
         </Grid>
         <Grid item xs={12} className="login-form__field">
           <Button type="submit" disabled={submitting} variant="contained" color="primary" >
-            Crear
+            {projectFormReducer.id > 0 ? 'Actualizar' : 'Crear'}
           </Button>
           <Button type="button" disabled={pristine || submitting} variant="contained" color="secondary" onClick={reset} >
             Limpiar
@@ -104,10 +106,15 @@ const Project = props => {
   );
 };
 
+const mS = state => ({
+  initialValues: state.projectFormReducer,
+  projectFormReducer: state.projectFormReducer
+});
+
 const CustomProject = reduxForm({
   form: "ProjectForm",
   validate,
   enableReinitialize: true
 })(Project);
 
-export default connect(null)(CustomProject);
+export default connect(mS)(CustomProject);

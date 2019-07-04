@@ -1,21 +1,21 @@
 import React from "react";
 import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
-import Button from '@material-ui/core/Button';
+import Button from "@material-ui/core/Button";
 import { Field, reduxForm } from "redux-form";
-import TextField from '@material-ui/core/TextField';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
-import { withStyles } from '@material-ui/core/styles';
-import FormControl from '@material-ui/core/FormControl';
+import MenuItem from "@material-ui/core/MenuItem";
+import TextField from "@material-ui/core/TextField";
+import Select from "@material-ui/core/Select";
+import InputLabel from "@material-ui/core/InputLabel";
+import { withStyles } from "@material-ui/core/styles";
+import FormControl from "@material-ui/core/FormControl";
 
 const styles = theme => ({
- formControl: {
-   margin: theme.spacing.unit,
-   minWidth: '100%',
- },
+  formControl: {
+    margin: theme.spacing.unit,
+    minWidth: "100%"
+  }
 });
-
 
 const validate = values => {
   const errors = {};
@@ -44,58 +44,64 @@ const renderTextField = ({
     {...input}
     {...custom}
   />
-)
+);
 
 const renderPickerField = ({
-    input,
-    label,
-    meta: { touched, error },
-    ...custom
-  }) => (
-    <TextField
-      hintText={label}
-      label={label}
-      error={touched && error}
+  input,
+  label,
+  meta: { touched, error },
+  ...custom
+}) => (
+  <TextField
+    hintText={label}
+    label={label}
+    error={touched && error}
+    {...input}
+    {...custom}
+    InputLabelProps={{
+      shrink: true
+    }}
+  />
+);
+
+const renderSelectField = ({
+  customSelect,
+  input,
+  label,
+  meta: { touched, error },
+  children,
+  classes,
+  ...custom
+}) => (
+  <FormControl className={classes.formControl} error={touched && error}>
+    <InputLabel htmlFor="age-native-simple" className="title-type">
+      {label}
+    </InputLabel>
+    <Select
+      className="select-underline"
       {...input}
       {...custom}
-      InputLabelProps={{
-          shrink: true,
+      inputProps={{
+        name: "age",
+        id: "age-native-simple"
       }}
-    />
-  )
-
-  const renderSelectField = ({
-   customSelect,
-   input,
-   label,
-   meta: { touched, error },
-   children,
-   classes,
-   ...custom,
- }) => (
-   <FormControl 
-     className={classes.formControl}
-     error={touched && error}
     >
-     <InputLabel htmlFor="age-native-simple" className="title-type">
-       Type
-     </InputLabel>
-     <Select
-       className="select-underline"
-       {...input}
-       {...custom}
-       inputProps={{
-         name: 'age',
-         id: 'age-native-simple',
-       }}
-     >
-       {children}
-     </Select>
-   </FormControl>
- );
+      {children}
+    </Select>
+  </FormControl>
+);
 
 const Sprint = props => {
-  const { handleSubmit, pristine, reset, submitting, handleForm, projects, classes } = props;
+  const {
+    handleSubmit,
+    pristine,
+    reset,
+    submitting,
+    handleForm,
+    projects,
+    classes,
+    sprintFormReducer
+  } = props;
   return (
     <Grid container spacing={0} className="login-form">
       <form onSubmit={handleSubmit(handleForm)}>
@@ -110,7 +116,7 @@ const Sprint = props => {
         <Grid item xs={12} className="login-form__field">
           <Field
             name="description"
-            type="description"
+            type="text"
             component={renderTextField}
             label="Descripción del Sprint"
           />
@@ -133,6 +139,24 @@ const Sprint = props => {
             />
           </Grid>
         </Grid>
+        {sprintFormReducer.id > 0 && (
+          <Grid item xs={12} className="login-form__field">
+            <Field
+              name="status"
+              component={renderSelectField}
+              label="Status"
+              inputProps={{
+                name: "status",
+                id: "status"
+              }}
+              classes={classes}
+            >
+              <MenuItem value={1}>Sin Asignar</MenuItem>
+              <MenuItem value={2}>En Proceso</MenuItem>
+              <MenuItem value={3}>Culminado</MenuItem>
+            </Field>
+          </Grid>
+        )}
         <Grid item xs={12} className="login-form__field">
           <Field
             name="project_id"
@@ -140,7 +164,7 @@ const Sprint = props => {
             label="Project"
             inputProps={{
               name: "project_id",
-              id: "project_id",
+              id: "project_id"
             }}
             classes={classes}
           >
@@ -158,7 +182,7 @@ const Sprint = props => {
             variant="contained"
             color="primary"
           >
-            Crear
+            {sprintFormReducer.id > 0 ? "Actualizar" : "Crear"}
           </Button>
           <Button
             type="button"
@@ -175,10 +199,15 @@ const Sprint = props => {
   );
 };
 
+const mS = state => ({
+  initialValues: state.sprintFormReducer,
+  sprintFormReducer: state.sprintFormReducer
+});
+
 const CustomSprint = reduxForm({
   form: "SprintForm",
   validate,
   enableReinitialize: true
 })(Sprint);
 
-export default withStyles(styles)(connect(null)(CustomSprint));
+export default withStyles(styles)(connect(mS)(CustomSprint));

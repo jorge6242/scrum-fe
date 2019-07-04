@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
+import Button from "@material-ui/core/Button";
 import Table from "@material-ui/core/Table";
 import Grid from "@material-ui/core/Grid";
 import TableBody from "@material-ui/core/TableBody";
@@ -9,11 +10,14 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
-import Select from '@material-ui/core/Select';
+import Select from "@material-ui/core/Select";
 import Paper from "@material-ui/core/Paper";
-import { getMainBacklogSprint } from "../../Actions/backlogActions";
+import { getMainBacklogSprint, customBacklogClear } from "../../Actions/backlogActions";
 import { getAll, get } from "../../Actions/projectActions";
-import { updateModal } from '../../Actions/modalActions';
+import { get as getBacklog, checkTaskSprint } from "../../Actions/backlogActions";
+import { updateModal } from "../../Actions/modalActions";
+import { update, setSelectedSprint } from '../../Actions/sprintActions';
+import snackBarStatus from '../../Actions/snackbarActions';
 import "./index.sass";
 import Task from "../Task";
 
@@ -30,26 +34,30 @@ const styles = theme => ({
 
 class Board extends Component {
   state = {
-    value: 0,
+    value: 0
   };
   componentWillMount() {
     this.props.getAll();
   }
   renderBacklog = backlog => {
-    console.log('backlog ', backlog);
+    console.log("backlog ", backlog);
     return (
       <TableRow>
+        <TableCell align="left">{backlog.name}</TableCell>
         <TableCell align="left">
-          {backlog.name}
+          {backlog.tasks.map(
+            task => task.status === 1 && this.renderTasks(task)
+          )}
         </TableCell>
         <TableCell align="left">
-        {backlog.tasks.map(task => task.status === 1 && this.renderTasks(task) )}
+          {backlog.tasks.map(
+            task => task.status === 2 && this.renderTasks(task)
+          )}
         </TableCell>
         <TableCell align="left">
-        {backlog.tasks.map(task => task.status === 2 && this.renderTasks(task) )}
-        </TableCell>
-        <TableCell align="left">
-        {backlog.tasks.map(task => task.status === 3 && this.renderTasks(task) )}
+          {backlog.tasks.map(
+            task => task.status === 3 && this.renderTasks(task)
+          )}
         </TableCell>
       </TableRow>
     );
@@ -57,25 +65,39 @@ class Board extends Component {
 
   renderTasks = task => {
     return (
-      <div className="task-container" onClick={this.handleTask}>
+      <div className="task-container" onClick={() => this.handleEditTask(task)}>
         {task.name}
       </div>
-    )
-  }
+    );
+  };
 
   handleChange = event => {
     this.setState({ value: event.target.value });
     if (event.target.value > 0) {
       this.props.get(event.target.value);
-      this.props.getMainBacklogSprint(event.target.value);
+      this.props.getMainBacklogSprint(event.target.value).then(res => {
+        if (res.length === 0) {
+          this.props.snackBarStatus({
+            payload: {
+                title: 'No hay Sprint en proceso para este proyecto',
+                type: 'error',
+                enable: true,
+            },
+        });
+        }
+      });
+    } else {
+      this.props.setSelectedSprint({});
+      this.props.customBacklogClear({ payload: { mainBacklogSprint: [] } });
     }
-  }
+  };
 
-  handleTask = () => {
+  handleEditTask = task => {
+    this.props.getBacklog(task.id);
     this.props.updateModal({
       payload: { status: true, title: "Task", element: <Task /> }
     });
-  }
+  };
 
   renderProjects = () => {
     const { classes, projects } = this.props;
@@ -93,23 +115,88 @@ class Board extends Component {
           <MenuItem value={0}>
             <em>Select Project</em>
           </MenuItem>
-          {
-            projects.map((project, key) => (
-              <MenuItem key={key} value={project.id}>{project.name}</MenuItem>
-            ))
-          }
+          {projects.map((project, key) => (
+            <MenuItem key={key} value={project.id}>
+              {project.name}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
-    )
+    );
   };
+
+  renderStatus = (key) => {
+    let status = '';
+    switch (key) {
+      case 1:
+        status = 'Sin Asignar';
+        break;
+      case 2:
+        status = 'En Progreso';
+        break;
+      case 3:
+        status = 'Culminado';
+        break;
+      default:
+        break;
+    }
+    return status;
+  }
+
+  handleSprint = () => {
+    const { selectedSprint, selectedProject } = this.props;
+    this.props.checkTaskSprint(selectedProject.id, selectedSprint.id).then(res => {
+      if (res) {
+        selectedSprint.status = 3;
+        this.props.update(selectedSprint).then(response => {
+          this.setState({ value: 0 });
+          this.props.setSelectedSprint({});
+          this.props.customBacklogClear({ payload: { mainBacklogSprint: [] } })
+          this.props.snackBarStatus({
+            payload: {
+                title: 'El sprint ha sido culminado con exito',
+                type: 'success',
+                enable: true,
+            },
+        });
+        })
+      } else {
+        this.props.snackBarStatus({
+          payload: {
+              title: 'Las tareas del sprint necesitan estar en Done',
+              type: 'error',
+              enable: true,
+          },
+      });
+      }
+    });
+  }
+
   render() {
-    const { classes, mainBacklogSprint } = this.props;
+    const { classes, mainBacklogSprint, selectedSprint } = this.props;
     return (
       <Grid container spacing={0} className="board-container">
-        <Grid item xs={6} className="board-container__title">
-          Sprint
-        </Grid>
-        <Grid item xs={6} className="board-container__projects">
+        {'name' in selectedSprint && (
+          <Grid container spacing={0} className="board-container__sprint-container">
+            <Grid item xs={4} className="board-container__sprint-title">
+              {selectedSprint.name}
+            </Grid>
+            <Grid item xs={4} className="board-container__sprint-button">
+              <Button
+                variant="contained"
+                color="primary"
+                className={classes.button}
+                onClick={() => this.handleSprint()}
+              >
+                Completar Sprint
+              </Button>
+            </Grid>
+            <Grid item xs={4} className="board-container__sprint-status">
+              {this.renderStatus(selectedSprint.status)}
+            </Grid>
+          </Grid>
+        )}
+        <Grid item xs={12} className="board-container__projects">
           {this.renderProjects()}
         </Grid>
         <Grid item xs={12} className="board-container__table">
@@ -140,19 +227,27 @@ Board.propTypes = {};
 
 const mS = ({
   backlogReducer: { mainBacklogSprint },
-  projectReducer: { projects },
-  sprintReducer: { sprints },
+  projectReducer: { projects, selectedProject, },
+  sprintReducer: { sprints, selectedSprint, }
 }) => ({
   mainBacklogSprint,
   projects,
   sprints,
+  selectedSprint,
+  selectedProject,
 });
 
 const mD = {
   getMainBacklogSprint,
   getAll,
-  get,
   updateModal,
+  get,
+  getBacklog,
+  update,
+  checkTaskSprint,
+  customBacklogClear,
+  setSelectedSprint,
+  snackBarStatus,
 };
 
 export default connect(

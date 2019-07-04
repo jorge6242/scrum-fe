@@ -3,11 +3,14 @@ import {
 } from '../Actions/sprintFormActions';
 
 const initialState = {
- id: '',
- name: '',
- description: '',
- startDate: '',
- endDate: '',
+ id: 0,
+ name: '', 
+ description: '', 
+ status: 0, 
+ availables_days: 0, 
+ start_date: '', 
+ end_date: '', 
+ project_id: 0,
 };
 
 const sprintFormReducer = (state = initialState, action) => {
