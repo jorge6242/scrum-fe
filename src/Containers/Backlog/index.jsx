@@ -8,13 +8,14 @@ import {
   getAll,
   getMainBacklog,
   getMainBacklogFromSprint,
-  update,
+  update
 } from "../../Actions/backlogActions";
-import { clear } from '../../Actions/backlogFormActions';
+import { clear } from "../../Actions/backlogFormActions";
 import { getAll as getUsers } from "../../Actions/userActions";
 import { getSprintsProject } from "../../Actions/sprintActions";
 import { updateModal } from "../../Actions/modalActions";
-import { getAvailableProjects } from '../../Actions/projectActions';
+import { getAvailableProjects } from "../../Actions/projectActions";
+import snackBarStatus from '../../Actions/snackbarActions';
 import "./index.sass";
 
 class Backlog extends Component {
@@ -45,15 +46,25 @@ class Backlog extends Component {
       });
     } else {
       form.status = 1;
-      if (form.type === 1) form.assoc_backlog = 0;
-      this.props.create(form).then(res => {
-        if (res.status === 200 || res.status === 201) {
-          this.props.getAll();
-          this.props.updateModal({
-            payload: { status: false, element: <div /> }
-          });
-        }
-      });
+      if ("project_id" in form && form.project_id > 0) {
+        if (form.type === 1) form.assoc_backlog = 0;
+        this.props.create(form).then(res => {
+          if (res.status === 200 || res.status === 201) {
+            this.props.getAll();
+            this.props.updateModal({
+              payload: { status: false, element: <div /> }
+            });
+          }
+        });
+      } else {
+        this.props.snackBarStatus({
+          payload: {
+            title: "Para crear un Backlog debe de existir proyectos con sprints disponibles",
+            type: "error",
+            enable: true
+          }
+        });
+      }
     }
   };
 
@@ -135,7 +146,7 @@ const mS = ({
   sprintReducer: { sprints, sprintsProject },
   userReducer: { users },
   backlogReducer: { mainBacklogs, mainBacklogFromSprint },
-  modalReducer: { title },
+  modalReducer: { title }
 }) => ({
   projects,
   sprints,
@@ -144,7 +155,7 @@ const mS = ({
   sprintsProject,
   mainBacklogFromSprint,
   title,
-  availableProjects,
+  availableProjects
 });
 
 const mD = {
@@ -158,6 +169,7 @@ const mD = {
   update,
   clear,
   getAvailableProjects,
+  snackBarStatus,
 };
 
 export default withRouter(

@@ -50,7 +50,6 @@ class Board extends Component {
     this.props.getAll();
   }
   renderBacklog = backlog => {
-    console.log("backlog ", backlog);
     return (
       <TableRow>
         <TableCell align="left">{backlog.name}</TableCell>
