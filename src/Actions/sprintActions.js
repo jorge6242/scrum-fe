@@ -8,7 +8,8 @@ export const ACTIONS = {
     GET_ALL: 'sprint/get_all',
     GET: 'sprint/get',
     SELECTED_SPRINT: 'sprint_selected_sprint',
-    GET_SPRINTS_FROM_PROJECT: 'sprint/get_sprints_from_project'
+    GET_SPRINTS_FROM_PROJECT: 'sprint/get_sprints_from_project',
+    GET_SPRINTS_FROM_PROJECT1: 'sprint/get_sprints_from_project1',
 };
 
 export const getAll = () => async dispatch => {
@@ -177,6 +178,33 @@ export const getSprintsProject = project => async dispatch => {
             response = data;
             dispatch({
                 type: ACTIONS.GET_SPRINTS_FROM_PROJECT,
+                payload: response
+            });
+        }
+        return response;
+    } catch (error) {
+        snackBarStatus({
+            payload: {
+                title: error.message,
+                type: 'error',
+                enable: true,
+            },
+        })(dispatch);
+        return error;
+    }
+};
+
+export const getSprintsFromProject = project => async dispatch => {
+    try {
+        const {
+            data: { data },
+            status
+        } = await Sprint.getSprintsFromProject(project);
+        let response = [];
+        if (status === 200) {
+            response = data;
+            dispatch({
+                type: ACTIONS.GET_SPRINTS_FROM_PROJECT1,
                 payload: response
             });
         }

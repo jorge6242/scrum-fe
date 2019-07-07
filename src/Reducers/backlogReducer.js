@@ -7,6 +7,7 @@ const initialState = {
     mainBacklogs: [],
     mainBacklogSprint: [],
     mainBacklogFromSprint: [],
+    boardFromSprint: [],
 };
 
 const backlogReducer = (state = initialState, action) => {
@@ -30,6 +31,11 @@ const backlogReducer = (state = initialState, action) => {
             return {
                 ...state,
                 mainBacklogFromSprint: action.payload,
+            };
+        case ACTIONS.GET_BOARD_FROM_SPRINT:
+            return {
+                ...state,
+                boardFromSprint: action.payload,
             };
         case ACTIONS.CUSTOM_CLEAR:
             return {

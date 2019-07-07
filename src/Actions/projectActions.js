@@ -5,7 +5,8 @@ import snackBarStatus from "./snackbarActions";
 export const ACTIONS = {
   GET_ALL: "project/get_all",
   GET: "project/get",
-  SELECTED_PROJECT: "project/selected_project"
+  SELECTED_PROJECT: "project/selected_project",
+  GET_AVAILABLE_PROJECTS : "project/get_available_projects"
 };
 
 export const getAll = () => async dispatch => {
@@ -23,6 +24,33 @@ export const getAll = () => async dispatch => {
       });
     }
     return getAllProjects;
+  } catch (error) {
+    snackBarStatus({
+      payload: {
+        title: error.message,
+        type: "error",
+        enable: true
+      }
+    })(dispatch);
+    return error;
+  }
+};
+
+export const getAvailableProjects = () => async dispatch => {
+  try {
+    const {
+      data: { data },
+      status
+    } = await Project.getAvailableProjects();
+    let response = [];
+    if (status === 200) {
+      response = data;
+      dispatch({
+        type: ACTIONS.GET_AVAILABLE_PROJECTS,
+        payload: response
+      });
+    }
+    return response;
   } catch (error) {
     snackBarStatus({
       payload: {

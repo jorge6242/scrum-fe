@@ -4,7 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import Avatar from "@material-ui/core/Avatar";
 import FaceIcon from "@material-ui/icons/Face";
 import { withStyles } from "@material-ui/core/styles";
-import { getAll, createUsersTeam } from "../../Actions/teamActions";
+import { getAll, createUsersTeam, remove } from "../../Actions/teamActions";
 import { getAll as getAllUsers } from "../../Actions/userActions";
 import "./index.sass";
 import Item from "./Item";
@@ -47,8 +47,13 @@ class TeamList extends Component {
     }
   };
 
-  handleUserRemove = user => {
-    console.log("user ", user);
+  handleTeamRemove = team => {
+    this.props.remove(team.id).then(res => {
+      if (res.status === 200 || res.status === 201) {
+        this.props.getAll();
+        this.props.getAllUsers();
+      }
+    });
   };
 
   renderUsers = (user, key) => {
@@ -57,7 +62,6 @@ class TeamList extends Component {
       <div
         key={key}
         className={`user-container`}
-        onClick={() => this.handleUserRemove(user)}
       >
         <div className="avatar">
           <Avatar className={classes.avatar}>
@@ -77,9 +81,10 @@ class TeamList extends Component {
           <Item
             key={index}
             team={team}
-            handleSelect={this.handleSelect}
             users={team.users}
+            handleSelect={this.handleSelect}
             renderUsers={this.renderUsers}
+            handleTeamRemove={this.handleTeamRemove}
           />
         ))}
       </Grid>
@@ -95,7 +100,8 @@ const mS = ({ teamReducer: { teams }, userReducer: { users } }) => ({
 const mD = {
   getAll,
   getAllUsers,
-  createUsersTeam
+  createUsersTeam,
+  remove,
 };
 
 export default withStyles(styles)(

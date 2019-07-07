@@ -14,6 +14,7 @@ class User extends Component {
   }
   handleForm = form => {
     if (form.id) {
+      delete form.password;
       this.props.update(form).then(res => {
         if (res.status === 200 || res.status === 201) {
           this.props.getAll();

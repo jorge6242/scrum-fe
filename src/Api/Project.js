@@ -6,6 +6,9 @@ const Project = {
   getAll() {
     return AXIOS.get(`${Prefix.api}/project`, { headers: headers() });
   },
+  getAvailableProjects() {
+    return AXIOS.get(`${Prefix.api}/get-available-projects`, { headers: headers() });
+  },
   create(data) {
     return AXIOS.post(
       `${Prefix.api}/project`,

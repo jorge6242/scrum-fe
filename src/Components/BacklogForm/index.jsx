@@ -43,6 +43,7 @@ const renderTextField = ({
   ...custom
 }) => (
   <TextField
+    InputProps={{ inputProps: { min: 0 } }}  
     hintText={label}
     label={label}
     error={touched && error}
@@ -122,11 +123,12 @@ const Backlog = props => {
           <Field
             name="estimate_days"
             type="number"
+            min="0"
             component={renderTextField}
             label="Dias de estimacion"
           />
         </Grid>
-        {backlogFormReducer.id === 0 && (
+        {backlogFormReducer.id === 0 && projects.length > 0 && (
           <Grid item xs={12} className="backlog-form__field">
             <Field
               name="project_id"

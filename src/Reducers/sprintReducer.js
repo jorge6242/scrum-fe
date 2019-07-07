@@ -6,6 +6,7 @@ const initialState = {
  sprints: [],
  selectedSprint: {},
  sprintsProject: [],
+ sprintsFromProject: [],
 };
 
 const sprintReducer = (state = initialState, action) => {
@@ -24,6 +25,11 @@ const sprintReducer = (state = initialState, action) => {
         return {
             ...state,
             sprintsProject: action.payload,
+        };
+    case ACTIONS.GET_SPRINTS_FROM_PROJECT1:
+        return {
+            ...state,
+            sprintsFromProject: action.payload,
         };
      default:
          return state;

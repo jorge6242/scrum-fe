@@ -72,7 +72,7 @@ const Project = props => {
             name="description"
             type="description"
             component={renderTextField}
-            label="Descripción del Proyecto"
+            label="Descripción"
           />
         </Grid>
         <Grid container spacing={0}>

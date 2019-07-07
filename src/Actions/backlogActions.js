@@ -10,6 +10,7 @@ export const ACTIONS = {
     GET_MAIN_BACKLOG: 'backlog/get_main_backlog',
     GET_MAIN_BACKLOG_SPRINT: 'backlog/get_main_backlog_sprint',
     GET_MAIN_BACKLOG_FROM_SPRINT: 'backlog/get_main_backlog_from_sprint',
+    GET_BOARD_FROM_SPRINT: 'backlog/get_board_from_sprint',
     GET: 'backlog/get',
     CUSTOM_CLEAR: 'backlog/custom_clear',
 };
@@ -279,6 +280,37 @@ export const getMainBacklogFromSprint = project => async dispatch => {
             }
             dispatch({
                 type: ACTIONS.GET_MAIN_BACKLOG_FROM_SPRINT,
+                payload: response
+            });
+        }
+        return response;
+    } catch (error) {
+        snackBarStatus({
+            payload: {
+                title: error.message,
+                type: 'error',
+                enable: true,
+            },
+        })(dispatch);
+        return error;
+    }
+};
+
+export const getBoardFromSprint = project => async dispatch => {
+    try {
+        const {
+            data: {
+                data
+            },
+            status
+        } = await Backlog.getBoardFromSprint(project);
+        let response = [];
+        if (status === 200) {
+            response = data;
+            if (data.length > 0) {
+            }
+            dispatch({
+                type: ACTIONS.GET_BOARD_FROM_SPRINT,
                 payload: response
             });
         }

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
-import Button from "@material-ui/core/Button";
 import Table from "@material-ui/core/Table";
 import Grid from "@material-ui/core/Grid";
 import TableBody from "@material-ui/core/TableBody";
@@ -11,9 +10,10 @@ import TableRow from "@material-ui/core/TableRow";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
+import InputLabel from "@material-ui/core/InputLabel";
 import Paper from "@material-ui/core/Paper";
 import {
-  getMainBacklogSprint,
+  getBoardFromSprint,
   customBacklogClear
 } from "../../Actions/backlogActions";
 import { getAll, get } from "../../Actions/projectActions";
@@ -25,7 +25,7 @@ import { updateModal } from "../../Actions/modalActions";
 import {
   update,
   setSelectedSprint,
-  getAll as getSprints
+  getSprintsFromProject
 } from "../../Actions/sprintActions";
 import snackBarStatus from "../../Actions/snackbarActions";
 import "./index.sass";
@@ -42,15 +42,16 @@ const styles = theme => ({
   }
 });
 
-class Board extends Component {
+class HistoryBoard extends Component {
   state = {
-    value: 0
+    projectValue: 0,
+    sprintValue: 0,
+    showSprints: false
   };
   componentWillMount() {
     this.props.getAll();
   }
   renderBacklog = backlog => {
-    console.log("backlog ", backlog);
     return (
       <TableRow>
         <TableCell align="left">{backlog.name}</TableCell>
@@ -82,24 +83,14 @@ class Board extends Component {
   };
 
   handleChange = event => {
-    this.setState({ value: event.target.value });
-    if (event.target.value > 0) {
-      this.props.get(event.target.value);
-      this.props.getMainBacklogSprint(event.target.value).then(res => {
-        if (res.length === 0) {
-          this.props.snackBarStatus({
-            payload: {
-              title: "No hay Sprint en proceso para este proyecto",
-              type: "error",
-              enable: true
-            }
-          });
-        }
-      });
-    } else {
-      this.props.setSelectedSprint({});
-      this.props.customBacklogClear({ payload: { mainBacklogSprint: [] } });
-    }
+    this.setState({ projectValue: event.target.value });
+    this.props.getSprintsFromProject(event.target.value).then(res => {
+      if (res.length > 0) {
+        this.setState({ showSprints: true });
+      } else {
+        this.setState({ showSprints: false });
+      }
+    });
   };
 
   handleEditTask = task => {
@@ -111,11 +102,14 @@ class Board extends Component {
 
   renderProjects = () => {
     const { classes, projects } = this.props;
-    const { value } = this.state;
+    const { projectValue } = this.state;
     return (
       <FormControl className={classes.formControl}>
+        <InputLabel htmlFor="age-native-simple" className="title-type">
+          Proyecto
+        </InputLabel>
         <Select
-          value={value}
+          value={projectValue}
           onChange={this.handleChange}
           inputProps={{
             name: "age",
@@ -128,6 +122,35 @@ class Board extends Component {
           {projects.map((project, key) => (
             <MenuItem key={key} value={project.id}>
               {project.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    );
+  };
+
+  renderSprints = () => {
+    const { classes, sprintsFromProject } = this.props;
+    const { sprintValue } = this.state;
+    return (
+      <FormControl className={classes.formControl}>
+        <InputLabel htmlFor="age-native-simple" className="title-type">
+          Sprint
+        </InputLabel>
+        <Select
+          value={sprintValue}
+          onChange={this.handleSprint}
+          inputProps={{
+            name: "age",
+            id: "age-simple"
+          }}
+        >
+          <MenuItem value={0}>
+            <em>Select Sprint</em>
+          </MenuItem>
+          {sprintsFromProject.map((sprint, key) => (
+            <MenuItem key={key} value={sprint.id}>
+              {sprint.name}
             </MenuItem>
           ))}
         </Select>
@@ -153,72 +176,31 @@ class Board extends Component {
     return status;
   };
 
-  handleSprint = () => {
-    const { selectedSprint, selectedProject } = this.props;
-    this.props
-      .checkTaskSprint(selectedProject.id, selectedSprint.id)
-      .then(res => {
-        if (res) {
-          selectedSprint.status = 3;
-          this.props.update(selectedSprint).then(response => {
-            this.setState({ value: 0 });
-            this.props.setSelectedSprint({});
-            this.props.customBacklogClear({
-              payload: { mainBacklogSprint: [], boardFromSprint: [] }
-            });
-            this.props.snackBarStatus({
-              payload: {
-                title: "El sprint ha sido culminado con exito",
-                type: "success",
-                enable: true
-              }
-            });
-            this.props.getSprints();
-          });
-        } else {
-          this.props.snackBarStatus({
-            payload: {
-              title: "Las tareas del sprint necesitan estar en Done",
-              type: "error",
-              enable: true
-            }
-          });
-        }
-      });
+  handleSprint = event => {
+    this.setState({ sprintValue: event.target.value });
+    if (event.target.value > 0) {
+      this.props.getBoardFromSprint(event.target.value);
+    } else {
+      this.props.setSelectedSprint({});
+      this.props.customBacklogClear({ payload: { boardFromSprint: [] } });
+    }
   };
 
   render() {
-    const { classes, mainBacklogSprint, selectedSprint } = this.props;
+    const { classes, boardFromSprint } = this.props;
+    const { showSprints } = this.state;
     return (
-      <Grid container spacing={0} className="board-container">
-        {"name" in selectedSprint && (
-          <Grid
-            container
-            spacing={0}
-            className="board-container__sprint-container"
-          >
-            <Grid item xs={4} className="board-container__sprint-title">
-              {selectedSprint.name}
-            </Grid>
-            <Grid item xs={4} className="board-container__sprint-button">
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.button}
-                onClick={() => this.handleSprint()}
-              >
-                Completar Sprint
-              </Button>
-            </Grid>
-            <Grid item xs={4} className="board-container__sprint-status">
-              {this.renderStatus(selectedSprint.status)}
-            </Grid>
-          </Grid>
-        )}
-        <Grid item xs={12} className="board-container__projects">
+      <Grid container spacing={0} className="history-board-container">
+        <Grid item xs={12} className="history-board-container__projects">
+          Historial
+        </Grid>
+        <Grid item xs={6} className="history-board-container__projects">
           {this.renderProjects()}
         </Grid>
-        <Grid item xs={12} className="board-container__table">
+        <Grid item xs={6} className="history-board-container__projects">
+          {showSprints && this.renderSprints()}
+        </Grid>
+        <Grid item xs={12} className="history-board-container__table">
           <Paper className={classes.root}>
             <Table className={classes.table}>
               <TableHead>
@@ -230,7 +212,7 @@ class Board extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {mainBacklogSprint.map((backlog, key) =>
+                {boardFromSprint.map((backlog, key) =>
                   this.renderBacklog(backlog, key)
                 )}
               </TableBody>
@@ -242,22 +224,21 @@ class Board extends Component {
   }
 }
 
-Board.propTypes = {};
-
 const mS = ({
-  backlogReducer: { mainBacklogSprint },
+  backlogReducer: { boardFromSprint },
   projectReducer: { projects, selectedProject },
-  sprintReducer: { sprints, selectedSprint }
+  sprintReducer: { sprints, selectedSprint, sprintsFromProject }
 }) => ({
-  mainBacklogSprint,
+  boardFromSprint,
   projects,
   sprints,
   selectedSprint,
-  selectedProject
+  selectedProject,
+  sprintsFromProject
 });
 
 const mD = {
-  getMainBacklogSprint,
+  getBoardFromSprint,
   getAll,
   updateModal,
   get,
@@ -267,10 +248,10 @@ const mD = {
   customBacklogClear,
   setSelectedSprint,
   snackBarStatus,
-  getSprints
+  getSprintsFromProject,
 };
 
 export default connect(
   mS,
   mD
-)(withStyles(styles)(Board));
+)(withStyles(styles)(HistoryBoard));

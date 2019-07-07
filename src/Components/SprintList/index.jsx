@@ -39,14 +39,16 @@ class SprintList extends Component {
         <Grid item xs={12}>
           Sprints
         </Grid>
-        {sprints.map((sprint, index) => (
-          <Item
-            key={index}
-            sprint={sprint}
-            renderStatus={this.renderStatus}
-            handleEdit={this.handleEdit}
-          />
-        ))}
+        <Grid container spacing={0} className="sprint-container__list">
+          {sprints.map((sprint, index) => (
+            <Item
+              key={index}
+              sprint={sprint}
+              renderStatus={this.renderStatus}
+              handleEdit={this.handleEdit}
+            />
+          ))}
+        </Grid>
       </Grid>
     );
   }

@@ -14,6 +14,7 @@ import { clear } from '../../Actions/backlogFormActions';
 import { getAll as getUsers } from "../../Actions/userActions";
 import { getSprintsProject } from "../../Actions/sprintActions";
 import { updateModal } from "../../Actions/modalActions";
+import { getAvailableProjects } from '../../Actions/projectActions';
 import "./index.sass";
 
 class Backlog extends Component {
@@ -24,6 +25,7 @@ class Backlog extends Component {
   };
   componentWillMount() {
     this.props.getUsers();
+    this.props.getAvailableProjects();
   }
 
   componentWillUnmount() {
@@ -96,7 +98,7 @@ class Backlog extends Component {
 
   render() {
     const {
-      projects,
+      availableProjects,
       sprints,
       users,
       mainBacklogs,
@@ -109,7 +111,7 @@ class Backlog extends Component {
         <Grid item xs={12} className="backlog-container__form">
           <BacklogForm
             handleForm={this.handleForm}
-            projects={projects}
+            projects={availableProjects}
             sprints={sprints}
             users={users}
             mainBacklogs={mainBacklogs}
@@ -129,7 +131,7 @@ class Backlog extends Component {
 }
 
 const mS = ({
-  projectReducer: { projects },
+  projectReducer: { projects, availableProjects },
   sprintReducer: { sprints, sprintsProject },
   userReducer: { users },
   backlogReducer: { mainBacklogs, mainBacklogFromSprint },
@@ -142,6 +144,7 @@ const mS = ({
   sprintsProject,
   mainBacklogFromSprint,
   title,
+  availableProjects,
 });
 
 const mD = {
@@ -154,6 +157,7 @@ const mD = {
   getMainBacklogFromSprint,
   update,
   clear,
+  getAvailableProjects,
 };
 
 export default withRouter(

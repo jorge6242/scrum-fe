@@ -12,6 +12,8 @@ import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
 import Button from "@material-ui/core/Button";
 import Modal from "../../Components/Modal";
+import Switch from "@material-ui/core/Switch";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { updateModal } from "../../Actions/modalActions";
 import { getAll, get } from "../../Actions/productActions";
 import { logout } from "../../Actions/loginActions";
@@ -26,6 +28,7 @@ import Sprint from "../Sprint";
 import Backlog from "../Backlog";
 import BacklogList from "../../Components/BacklogList";
 import Board from "../Board";
+import HistoryBoard from "../HistoryBoard";
 
 function TabContainer({ children, dir }) {
   return (
@@ -53,7 +56,8 @@ const styles = theme => ({
 
 class Dashboard extends Component {
   state = {
-    value: 0
+    value: 0,
+    historyBoard: false
   };
 
   handleClick = () => {
@@ -63,7 +67,7 @@ class Dashboard extends Component {
     switch (value) {
       case 0:
         element = <Project />;
-        title = "Projecto";
+        title = "Proyecto";
         break;
       case 2:
         element = <Backlog />;
@@ -158,8 +162,18 @@ class Dashboard extends Component {
     return button;
   };
 
+  handleBoard = event => {
+    const { historyBoard } = this.state;
+    if (historyBoard) {
+      this.setState({ historyBoard: false });
+    } else {
+      this.setState({ historyBoard: true });
+    }
+  };
+
   render() {
     const { classes, theme } = this.props;
+    const { historyBoard, value } = this.state;
     return (
       <Grid container spacing={0} id="dashboard">
         <AppBar position="static" color="default">
@@ -195,7 +209,7 @@ class Dashboard extends Component {
             <SprintList />
           </TabContainer>
           <TabContainer dir={theme.direction}>
-            <Board />
+            {historyBoard ? <HistoryBoard /> : <Board />}
           </TabContainer>
         </SwipeableViews>
         <Grid
@@ -212,6 +226,21 @@ class Dashboard extends Component {
             Logout
           </Button>
         </Grid>
+        {value === 4 && (
+          <Grid item xs={12} className="dashboard__switch">
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={historyBoard}
+                  onChange={this.handleBoard}
+                  color="primary"
+                  inputProps={{ "aria-label": "primary checkbox" }}
+                />
+              }
+              label="Mostrar Historial"
+            />
+          </Grid>
+        )}
         <Grid item xs={12} className="dashboard__create">
           {this.renderButtons()}
         </Grid>

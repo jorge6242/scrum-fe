@@ -28,6 +28,11 @@ const Backlog = {
       headers: headers()
     });
   },
+  getBoardFromSprint(sprint) {
+    return AXIOS.get(`${Prefix.api}/get-board-from-sprint/${sprint}`, {
+      headers: headers()
+    });
+  },
   create(data) {
     return AXIOS.post(
       `${Prefix.api}/backlog`, {

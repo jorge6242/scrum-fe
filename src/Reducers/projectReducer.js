@@ -5,6 +5,7 @@ import {
 const initialState = {
     projects: [],
     selectedProject: {},
+    availableProjects: {},
 };
 
 const projectReducer = (state = initialState, action) => {
@@ -18,6 +19,11 @@ const projectReducer = (state = initialState, action) => {
             return {
                 ...state,
                 selectedProject: action.payload,
+            };
+        case ACTIONS.GET_AVAILABLE_PROJECTS:
+            return {
+                ...state,
+                availableProjects: action.payload,
             };
         default:
             return state;
