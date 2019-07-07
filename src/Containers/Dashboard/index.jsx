@@ -65,17 +65,17 @@ class Dashboard extends Component {
     let element = <div />;
     let title = "";
     switch (value) {
-      case 0:
+      case 1:
         element = <Project />;
         title = "Proyecto";
         break;
       case 2:
-        element = <Backlog />;
-        title = "Backlog";
-        break;
-      case 3:
         element = <Sprint />;
         title = "Sprint";
+        break;
+      case 3:
+        element = <Backlog />;
+        title = "Backlog";
         break;
       default:
         break;
@@ -127,9 +127,6 @@ class Dashboard extends Component {
     let button = <div />;
     switch (value) {
       case 0:
-        button = this.renderSimpleButton();
-        break;
-      case 1:
         button = (
           <React.Fragment>
             <Button
@@ -149,6 +146,9 @@ class Dashboard extends Component {
             </Button>
           </React.Fragment>
         );
+        break;
+      case 1:
+        button = this.renderSimpleButton();
         break;
       case 2:
         button = this.renderSimpleButton();
@@ -184,10 +184,10 @@ class Dashboard extends Component {
             textColor="primary"
             variant="fullWidth"
           >
-            <Tab label="Proyecto" />
             <Tab label="Personas" />
-            <Tab label="Backlog" />
+            <Tab label="Proyecto" />
             <Tab label="Sprint" />
+            <Tab label="Backlog" />
             <Tab label="Tablero" />
           </Tabs>
         </AppBar>
@@ -197,16 +197,16 @@ class Dashboard extends Component {
           onChangeIndex={this.handleChangeIndex}
         >
           <TabContainer dir={theme.direction}>
-            <ProjectList />
-          </TabContainer>
-          <TabContainer dir={theme.direction}>
             <Persons />
           </TabContainer>
           <TabContainer dir={theme.direction}>
-            <BacklogList />
+            <ProjectList />
           </TabContainer>
           <TabContainer dir={theme.direction}>
             <SprintList />
+          </TabContainer>
+          <TabContainer dir={theme.direction}>
+            <BacklogList />
           </TabContainer>
           <TabContainer dir={theme.direction}>
             {historyBoard ? <HistoryBoard /> : <Board />}
