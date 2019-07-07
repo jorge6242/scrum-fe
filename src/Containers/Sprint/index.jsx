@@ -4,12 +4,16 @@ import Grid from "@material-ui/core/Grid";
 import { withRouter } from "react-router-dom";
 import SprintForm from "../../Components/SprintForm";
 import { create, getAll, update } from "../../Actions/sprintActions";
+import { clear } from '../../Actions/sprintFormActions';
 import { updateModal } from "../../Actions/modalActions";
 import { validateRange } from "../../helpers/date";
 import snackBarStatus from "../../Actions/snackbarActions";
 import "./index.sass";
 
 class Sprint extends Component {
+  componentWillUnmount() {
+    this.props.clear();
+  }
   handleForm = form => {
     if (validateRange(form.start_date, form.end_date)) {
       if (form.id > 0) {
@@ -64,6 +68,7 @@ const mD = {
   updateModal,
   update,
   snackBarStatus,
+  clear,
 };
 
 export default withRouter(

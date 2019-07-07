@@ -4,12 +4,16 @@ import Grid from "@material-ui/core/Grid";
 import { withRouter } from "react-router-dom";
 import ProjectForm from "../../Components/ProjectForm";
 import { create, getAll, update } from "../../Actions/projectActions";
+import { clear } from '../../Actions/projectFormActions';
 import { updateModal } from "../../Actions/modalActions";
 import { validateRange } from "../../helpers/date";
 import snackBarStatus from "../../Actions/snackbarActions";
 import "./index.sass";
 
 class Project extends Component {
+  componentWillUnmount() {
+    this.props.clear();
+  }
   handleForm = form => {
     if (validateRange(form.start_date, form.end_date)) {
       if (form.id > 0) {
@@ -62,7 +66,8 @@ const mD = {
   getAll,
   updateModal,
   update,
-  snackBarStatus
+  snackBarStatus,
+  clear,
 };
 
 export default withRouter(
