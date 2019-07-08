@@ -26,7 +26,8 @@ const validate = values => {
     "estimate_days",
     "type",
     "project_id",
-    "sprint_id"
+    "sprint_id",
+    "user_id",
   ];
   requiredFields.forEach(field => {
     if (!values[field]) {
