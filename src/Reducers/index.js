@@ -18,6 +18,8 @@ import backlogReducer from './backlogReducer';
 import backlogFormReducer from './backlogFormReducer';
 import sprintReducer from './sprintReducer';
 import sprintFormReducer from './sprintFormReducer';
+import roleReducer from './roleReducer';
+import roleFormReducer from './roleFormReducer';
 
 const rootReducer = combineReducers({
   modalReducer,
@@ -35,6 +37,8 @@ const rootReducer = combineReducers({
   backlogFormReducer,
   sprintReducer,
   sprintFormReducer,
+  roleReducer,
+  roleFormReducer,
 });
 
 export default rootReducer;

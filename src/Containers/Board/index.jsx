@@ -187,10 +187,10 @@ class Board extends Component {
   };
 
   render() {
-    const { classes, mainBacklogSprint, selectedSprint } = this.props;
+    const { classes, mainBacklogSprint, selectedSprint, role } = this.props;
     return (
       <Grid container spacing={0} className="board-container">
-        {"name" in selectedSprint && (
+        {"name" in selectedSprint && role.name === 'Proyecto' && (
           <Grid
             container
             spacing={0}
@@ -246,13 +246,15 @@ Board.propTypes = {};
 const mS = ({
   backlogReducer: { mainBacklogSprint },
   projectReducer: { projects, selectedProject },
-  sprintReducer: { sprints, selectedSprint }
+  sprintReducer: { sprints, selectedSprint },
+  userReducer: { userProfile: { role } }
 }) => ({
   mainBacklogSprint,
   projects,
   sprints,
   selectedSprint,
-  selectedProject
+  selectedProject,
+  role,
 });
 
 const mD = {

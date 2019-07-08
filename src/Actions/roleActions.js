@@ -1,15 +1,12 @@
-import User from '../Api/User';
+import Role from '../Api/Role';
 import {
     ACTIONS as ACTIONS_FORM
-} from './userFormActions';
+} from './roleFormActions';
 import snackBarStatus from './snackbarActions';
 
 export const ACTIONS = {
-    GET_ALL: 'user/get_all',
-    GET_AVAILABLE_USERS: 'user/get_available_users',
-    GET_USER_PROFILE: 'user/get_user_profile',
-    GET: 'user/get',
-    UPDATE_LIST: 'user/update_list',
+    GET_ALL: 'role/get_all',
+    GET: 'role/get',
 };
 
 export const getAll = () => async dispatch => {
@@ -17,7 +14,7 @@ export const getAll = () => async dispatch => {
         const {
             data: { data },
             status
-        } = await User.getAll();
+        } = await Role.getAll();
         let response = [];
         if (status === 200) {
             response = data;
@@ -39,66 +36,12 @@ export const getAll = () => async dispatch => {
     }
 };
 
-export const getUserProfile = () => async dispatch => {
-    try {
-        const {
-            data: { data },
-            status
-        } = await User.getUserProfile();
-        let response = [];
-        if (status === 200) {
-            response = data;
-            dispatch({
-                type: ACTIONS.GET_USER_PROFILE,
-                payload: response
-            });
-        }
-        return response;
-    } catch (error) {
-        snackBarStatus({
-            payload: {
-                title: error.message,
-                type: 'error',
-                enable: true,
-            },
-        })(dispatch);
-        return error;
-    }
-};
-
-export const getUsersAvailable = () => async dispatch => {
-    try {
-        const {
-            data: { data },
-            status
-        } = await User.getUsersAvailable();
-        let response = [];
-        if (status === 200) {
-            response = data;
-            dispatch({
-                type: ACTIONS.GET_AVAILABLE_USERS,
-                payload: response
-            });
-        }
-        return response;
-    } catch (error) {
-        snackBarStatus({
-            payload: {
-                title: error.message,
-                type: 'error',
-                enable: true,
-            },
-        })(dispatch);
-        return error;
-    }
-};
-
 export const create = body => async dispatch => {
     try {
         const {
             data,
             status
-        } = await User.create(body);
+        } = await Role.create(body);
         let response = [];
         if (status === 200 || status === 201) {
             response = {
@@ -107,7 +50,7 @@ export const create = body => async dispatch => {
             };
             snackBarStatus({
                 payload: {
-                    title: 'User Created!',
+                    title: 'Team Created!',
                     type: 'success',
                     enable: true,
                 },
@@ -131,16 +74,16 @@ export const get = id => async dispatch => {
         const {
             data: { data },
             status
-        } = await User.get(id);
-        let response = [];
+        } = await Role.get(id);
+        let teamResponse = [];
         if (status === 200) {
-            response = data;
+            teamResponse = data;
             dispatch({
                 type: ACTIONS_FORM.SET_EDIT,
                 payload: data
             });
         }
-        return response;
+        return teamResponse;
     } catch (error) {
         snackBarStatus({
             payload: {
@@ -158,22 +101,22 @@ export const update = body => async dispatch => {
         const {
             data,
             status
-        } = await User.update(body);
-        let response = [];
+        } = await Role.update(body);
+        let teamResponse = [];
         if (status === 200) {
-            response = {
+            teamResponse = {
                 data,
                 status
             };
             snackBarStatus({
                 payload: {
-                    title: 'User Updated!',
+                    title: 'Team Updated!',
                     type: 'success',
                     enable: true,
                 },
             })(dispatch);
         }
-        return response;
+        return teamResponse;
     } catch (error) {
         snackBarStatus({
             payload: {
@@ -191,16 +134,49 @@ export const remove = id => async dispatch => {
         const {
             data,
             status
-        } = await User.remove(id);
-        let response = [];
+        } = await Role.remove(id);
+        let teamResponse = [];
         if (status === 200) {
+            teamResponse = {
+                data,
+                status
+            };
+            snackBarStatus({
+                payload: {
+                    title: 'Team Removed!',
+                    type: 'success',
+                    enable: true,
+                },
+            })(dispatch);
+        }
+        return teamResponse;
+    } catch (error) {
+        snackBarStatus({
+            payload: {
+                title: error.message,
+                type: 'error',
+                enable: true,
+            },
+        })(dispatch);
+        return error;
+    }
+};
+
+export const createUsersTeam = body => async dispatch => {
+    try {
+        const {
+            data,
+            status
+        } = await Role.createUsersTeam(body);
+        let response = [];
+        if (status === 200 || status === 201) {
             response = {
                 data,
                 status
             };
             snackBarStatus({
                 payload: {
-                    title: 'User Removed!',
+                    title: 'User Team Created!',
                     type: 'success',
                     enable: true,
                 },
@@ -219,5 +195,4 @@ export const remove = id => async dispatch => {
     }
 };
 
-export const updateList = users => ({ type: ACTIONS.UPDATE_LIST, payload: users });
-
+export const selectedUsers = users => ({ type: ACTIONS.USERS_ADD_TEAM, payload: users });

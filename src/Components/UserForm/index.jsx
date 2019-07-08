@@ -3,14 +3,28 @@ import { connect } from "react-redux";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import { Field, reduxForm } from "redux-form";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
+import InputLabel from "@material-ui/core/InputLabel";
+import FormControl from "@material-ui/core/FormControl";
 import "./index.sass";
 
 const validate = values => {
   const errors = {};
-  if (!values.name) {
-    errors.name = "Required";
-  }
+  const requiredFields = [
+    "name",
+    "lastname",
+    "email",
+    "phone",
+    "company",
+    "role_id"
+  ];
+  requiredFields.forEach(field => {
+    if (!values[field]) {
+      errors[field] = "Required";
+    }
+  });
   return errors;
 };
 
@@ -29,6 +43,33 @@ const renderTextField = ({
   />
 );
 
+const renderSelectField = ({
+  customSelect,
+  input,
+  label,
+  classes,
+  meta: { touched, error },
+  children,
+  ...custom
+}) => (
+  <FormControl className={classes.formControl} error={touched && error}>
+    <InputLabel htmlFor="age-native-simple" className="title-type">
+      {label}
+    </InputLabel>
+    <Select
+      className="select-underline"
+      {...input}
+      {...custom}
+      inputProps={{
+        name: "age",
+        id: "age-native-simple"
+      }}
+    >
+      {children}
+    </Select>
+  </FormControl>
+);
+
 const UserForm = props => {
   const {
     handleSubmit,
@@ -36,7 +77,9 @@ const UserForm = props => {
     reset,
     submitting,
     handleForm,
-    userFormReducer
+    userFormReducer,
+    roles,
+    classes
   } = props;
   return (
     <Grid container spacing={0} className="user-form">
@@ -64,6 +107,24 @@ const UserForm = props => {
             component={renderTextField}
             label="Correo"
           />
+        </Grid>
+        <Grid item xs={12} className="user-form__field">
+          <Field
+            name="role_id"
+            component={renderSelectField}
+            label="Rol"
+            inputProps={{
+              name: "role_id",
+              id: "role_id"
+            }}
+            classes={classes}
+          >
+            {roles.map((role, key) => (
+              <MenuItem key={key} value={role.id}>
+                {role.name}
+              </MenuItem>
+            ))}
+          </Field>
         </Grid>
         <Grid item xs={12} className="user-form__field">
           <Field

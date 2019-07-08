@@ -10,6 +10,7 @@ import {
     phone: '',
     company: '',
     password: '',
+    role_id: 0,
   };
   
   const userFormReducer = (state = initialState, action) => {

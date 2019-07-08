@@ -28,6 +28,8 @@ import Sprint from "../Sprint";
 import Backlog from "../Backlog";
 import BacklogList from "../../Components/BacklogList";
 import Board from "../Board";
+import { getAll as getRoles } from "../../Actions/roleActions";
+import { getUserProfile } from "../../Actions/userActions";
 import HistoryBoard from "../HistoryBoard";
 
 function TabContainer({ children, dir }) {
@@ -60,14 +62,28 @@ class Dashboard extends Component {
     historyBoard: false
   };
 
+  componentWillMount() {
+    this.props.getRoles();
+    this.props.getUserProfile();
+  }
+
   handleClick = () => {
+    const { role } = this.props;
     const { value } = this.state;
     let element = <div />;
     let title = "";
     switch (value) {
+      case 0:
+        if (role.name === "Desarrollo" || role.name === "QA") {
+          element = <Backlog />;
+          title = "Backlog";
+        }
+        break;
       case 1:
-        element = <Project />;
-        title = "Proyecto";
+        if (role.name === "Proyecto") {
+          element = <Project />;
+          title = "Proyecto";
+        }
         break;
       case 2:
         element = <Sprint />;
@@ -123,32 +139,37 @@ class Dashboard extends Component {
   );
 
   renderButtons = () => {
+    const { role } = this.props;
     const { value } = this.state;
     let button = <div />;
     switch (value) {
       case 0:
-        button = (
-          <React.Fragment>
-            <Button
-              variant="contained"
-              color="primary"
-              className="dashboard__add-team-button"
-              onClick={this.handleTeam}
-            >
-              Add Team
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleUser}
-            >
-              Add User
-            </Button>
-          </React.Fragment>
-        );
+        if (role.name === "Desarrollo" || role.name === "QA") {
+          button = this.renderSimpleButton();
+        } else {
+          button = (
+            <React.Fragment>
+              <Button
+                variant="contained"
+                color="primary"
+                className="dashboard__add-team-button"
+                onClick={this.handleTeam}
+              >
+                Add Team
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.handleUser}
+              >
+                Add User
+              </Button>
+            </React.Fragment>
+          );
+        }
         break;
       case 1:
-        button = this.renderSimpleButton();
+        button = role.name === "Proyecto" && this.renderSimpleButton();
         break;
       case 2:
         button = this.renderSimpleButton();
@@ -171,81 +192,185 @@ class Dashboard extends Component {
     }
   };
 
-  render() {
-    const { classes, theme } = this.props;
-    const { historyBoard, value } = this.state;
+  renderTabRoles = key => {
+    let render = <div />;
+    switch (key) {
+      case "Proyecto":
+        return (render = (
+          <React.Fragment>
+            <Tabs
+              value={this.state.value}
+              onChange={this.handleChange}
+              indicatorColor="primary"
+              textColor="primary"
+              variant="fullWidth"
+            >
+              <Tab label="Personas" />
+              <Tab label="Proyecto" />
+              <Tab label="Sprint" />
+              <Tab label="Backlog" />
+              <Tab label="Tablero" />
+            </Tabs>
+          </React.Fragment>
+        ));
+      case "Desarrollo":
+      case "QA":
+        return (render = (
+          <React.Fragment>
+            <Tabs
+              value={this.state.value}
+              onChange={this.handleChange}
+              indicatorColor="primary"
+              textColor="primary"
+              variant="fullWidth"
+            >
+              <Tab label="Backlog" />
+              <Tab label="Tablero" />
+            </Tabs>
+          </React.Fragment>
+        ));
+      default:
+        return render;
+    }
+  };
+
+  renderSwipeableViewsRoles = key => {
+    const { theme } = this.props;
+    const { historyBoard } = this.state;
+    let render = <div />;
+    switch (key) {
+      case "Proyecto":
+        return (render = (
+          <React.Fragment>
+            <SwipeableViews
+              axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+              index={this.state.value}
+              onChangeIndex={this.handleChangeIndex}
+            >
+              <TabContainer dir={theme.direction}>
+                <Persons />
+              </TabContainer>
+              <TabContainer dir={theme.direction}>
+                <ProjectList />
+              </TabContainer>
+              <TabContainer dir={theme.direction}>
+                <SprintList />
+              </TabContainer>
+              <TabContainer dir={theme.direction}>
+                <BacklogList />
+              </TabContainer>
+              <TabContainer dir={theme.direction}>
+                {historyBoard ? <HistoryBoard /> : <Board />}
+              </TabContainer>
+            </SwipeableViews>
+          </React.Fragment>
+        ));
+      case "Desarrollo":
+      case "QA":
+        return (render = (
+          <React.Fragment>
+            <SwipeableViews
+              axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+              index={this.state.value}
+              onChangeIndex={this.handleChangeIndex}
+            >
+              <TabContainer dir={theme.direction}>
+                <BacklogList />
+              </TabContainer>
+              <TabContainer dir={theme.direction}>
+                {historyBoard ? <HistoryBoard /> : <Board />}
+              </TabContainer>
+            </SwipeableViews>
+          </React.Fragment>
+        ));
+      default:
+        return render;
+    }
+  };
+
+  renderTabs = () => {
+    const { role } = this.props;
     return (
-      <Grid container spacing={0} id="dashboard">
+      <React.Fragment>
         <AppBar position="static" color="default">
-          <Tabs
-            value={this.state.value}
-            onChange={this.handleChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="fullWidth"
-          >
-            <Tab label="Personas" />
-            <Tab label="Proyecto" />
-            <Tab label="Sprint" />
-            <Tab label="Backlog" />
-            <Tab label="Tablero" />
-          </Tabs>
+          {this.renderTabRoles(role.name)}
         </AppBar>
-        <SwipeableViews
-          axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-          index={this.state.value}
-          onChangeIndex={this.handleChangeIndex}
-        >
-          <TabContainer dir={theme.direction}>
-            <Persons />
-          </TabContainer>
-          <TabContainer dir={theme.direction}>
-            <ProjectList />
-          </TabContainer>
-          <TabContainer dir={theme.direction}>
-            <SprintList />
-          </TabContainer>
-          <TabContainer dir={theme.direction}>
-            <BacklogList />
-          </TabContainer>
-          <TabContainer dir={theme.direction}>
-            {historyBoard ? <HistoryBoard /> : <Board />}
-          </TabContainer>
-        </SwipeableViews>
+        {this.renderSwipeableViewsRoles(role.name)}
+      </React.Fragment>
+    );
+  };
+
+  renderSwitch = () => {
+    const { historyBoard, value } = this.state;
+    const { role } = this.props;
+    if (role.name === "Proyecto" && value === 4) {
+      return (
+        <Grid item xs={12} className="dashboard__switch">
+          <FormControlLabel
+            control={
+              <Switch
+                checked={historyBoard}
+                onChange={this.handleBoard}
+                color="primary"
+                inputProps={{ "aria-label": "primary checkbox" }}
+              />
+            }
+            label="Mostrar Historial"
+          />
+        </Grid>
+      );
+    }
+    if ((role.name === "Desarrollo" || role.name === "QA") && value === 1) {
+      return (
+        <Grid item xs={12} className="dashboard__switch">
+          <FormControlLabel
+            control={
+              <Switch
+                checked={historyBoard}
+                onChange={this.handleBoard}
+                color="primary"
+                inputProps={{ "aria-label": "primary checkbox" }}
+              />
+            }
+            label="Mostrar Historial"
+          />
+        </Grid>
+      );
+    }
+  };
+
+  render() {
+    const { classes, role } = this.props;
+    return (
+      role !== undefined && (
         <Grid
-          item
-          xs={12}
-          className="dashboard__logout"
-          onClick={this.handleLogout}
+          container
+          spacing={0}
+          id="dashboard"
+          className={`${role.name !== "Proyecto" ? "custom-display" : ""}`}
         >
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.button}
+          {this.renderTabs()}
+          <Grid
+            item
+            xs={12}
+            className="dashboard__logout"
+            onClick={this.handleLogout}
           >
-            Logout
-          </Button>
-        </Grid>
-        {value === 4 && (
-          <Grid item xs={12} className="dashboard__switch">
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={historyBoard}
-                  onChange={this.handleBoard}
-                  color="primary"
-                  inputProps={{ "aria-label": "primary checkbox" }}
-                />
-              }
-              label="Mostrar Historial"
-            />
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.button}
+            >
+              Logout
+            </Button>
           </Grid>
-        )}
-        <Grid item xs={12} className="dashboard__create">
-          {this.renderButtons()}
+          {this.renderSwitch()}
+          <Grid item xs={12} className="dashboard__create">
+            {this.renderButtons()}
+          </Grid>
+          <Modal />
         </Grid>
-        <Modal />
-      </Grid>
+      )
     );
   }
 }
@@ -255,15 +380,23 @@ Dashboard.propTypes = {
   theme: PropTypes.object.isRequired
 };
 
-const mS = ({ productReducer: { products } }) => ({
-  products
+const mS = ({
+  productReducer: { products },
+  userReducer: {
+    userProfile: { role }
+  }
+}) => ({
+  products,
+  role
 });
 
 const mD = {
   updateModal,
   getAll,
   get,
-  logout
+  logout,
+  getRoles,
+  getUserProfile
 };
 
 export default connect(
